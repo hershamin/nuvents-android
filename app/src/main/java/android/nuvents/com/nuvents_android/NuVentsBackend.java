@@ -4,8 +4,6 @@ package android.nuvents.com.nuvents_android;
  * Created by hersh on 4/28/15.
  */
 
-import android.provider.Settings;
-
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -22,9 +20,9 @@ public class NuVentsBackend {
     private Socket nSocket;
 
     // Initialization called
-    public NuVentsBackend(NuVentsBackendDelegate delegatePassed, String server) throws URISyntaxException {
+    public NuVentsBackend(NuVentsBackendDelegate delegatePassed, String server, String devID) throws URISyntaxException {
         delegate = delegatePassed; // Assign delegate
-        deviceID = Settings.Secure.ANDROID_ID; // Get device ID
+        deviceID = devID; // Get device ID
         // Socket connection handling
         nSocket = IO.socket(server);
         addSocketHandlingMethods();
