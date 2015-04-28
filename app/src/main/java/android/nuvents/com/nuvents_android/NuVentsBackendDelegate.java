@@ -13,7 +13,8 @@ public interface NuVentsBackendDelegate {
     public void nuventsServerDidReceiveEventDetail(JSONObject event);       // Got event detail
 
     // Connection Status
-    public void nuventsServerDidGetNewData(String channel, Object data);    // Got new data from any WS event
+    //public void nuventsServerDidGetNewData(String channel, Object data);    // Got new data from any WS event
+            // CANNOT implement in Android
     public void nuventsServerDidConnect();                                  // Connected
     public void nuventsServerDidDisconnect();                               // Disconnected
     public void nuventsServerDidRespondToPing(String response);             // Got ping response
