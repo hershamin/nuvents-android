@@ -10,6 +10,7 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import java.net.URISyntaxException;
 
@@ -57,7 +58,8 @@ public class NuVentsBackend {
         nSocket.on("event:nearby", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                JSONObject obj = (JSONObject)args[0];
+                Object rawObj = JSONValue.parse((String)args[0]);
+                JSONObject obj = (JSONObject)rawObj;
                 delegate.nuventsServerDidReceiveNearbyEvent(obj);
             }
         });
@@ -79,7 +81,8 @@ public class NuVentsBackend {
         nSocket.on("event:detail", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                JSONObject obj = (JSONObject)args[0];
+                Object rawObj = JSONValue.parse((String)args[0]);
+                JSONObject obj = (JSONObject)rawObj;
                 delegate.nuventsServerDidReceiveEventDetail(obj);
             }
         });
