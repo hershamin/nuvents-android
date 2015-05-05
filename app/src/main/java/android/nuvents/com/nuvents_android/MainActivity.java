@@ -6,9 +6,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import android.util.Log;
+
+import org.json.simple.JSONObject;
+
+import java.net.URISyntaxException;
 
 
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback {
+public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, NuVentsBackendDelegate {
+
+    public NuVentsBackend api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,18 +25,24 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        try {
+            api = new NuVentsBackend(this, "http://repo.nuvents.com:1026/", "test");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(-33.867, 151.206);
+        LatLng austin = new LatLng(30.2766, -97.734);
 
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(austin, 9));
 
-        map.addMarker(new MarkerOptions().title("Sydney")
-                .snippet("The most populus city in Australia.")
-                .position(sydney));
+        map.addMarker(new MarkerOptions().title("Austin")
+                .snippet("TX")
+                .position(austin));
     }
 
     @Override
@@ -52,5 +65,48 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // MARK: NuVents Backend Methods
+    @Override
+    public void nuventsServerDidReceiveNearbyEvent(JSONObject event) {
+        for (Object key : event.keySet()) {
+            Log.i("EVENT", (String)key + ": " + event.get(key).toString());
+        }
+    }
+
+    @Override
+    public void nuventsServerDidReceiveEventDetail(JSONObject event) {
+        //
+    }
+
+    @Override
+    public void nuventsServerDidConnect() {
+        Log.i("Server", "NuVents Backend connected");
+
+        // Example code
+        LatLng austin = new LatLng(30.2766, -97.734);
+        api.getNearbyEvents(austin, 500);
+
+    }
+
+    @Override
+    public void nuventsServerDidDisconnect() {
+        Log.i("Server", "NuVents Backend disconnected");
+    }
+
+    @Override
+    public void nuventsServerDidRespondToPing(String response) {
+        Log.i("PING", "RESPONSE: " + response);
+    }
+
+    @Override
+    public void nuventsServerDidReceiveError(String type, String error) {
+        //
+    }
+
+    @Override
+    public void nuventsServerDidReceiveStatus(String type, String status) {
+        //
     }
 }
