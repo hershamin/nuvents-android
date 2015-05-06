@@ -6,6 +6,7 @@ package android.nuvents.com.nuvents_android;
 
 import android.app.Application;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
@@ -16,7 +17,8 @@ public class GlobalVariables extends Application {
     public final static String server = "http://repo.nuvents.com:1026/";
 
     // Global variables
-    public ArrayList<Marker> eventMarkers = new ArrayList<Marker>();
+    public static ArrayList<Marker> eventMarkers = new ArrayList<Marker>();
+    public static GoogleMap mapView;
 
     private static GlobalVariables singleton;
 

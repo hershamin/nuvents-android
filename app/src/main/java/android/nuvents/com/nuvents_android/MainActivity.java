@@ -26,7 +26,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         try {
-            api = new NuVentsBackend(this, "http://repo.nuvents.com:1026/", "test");
+            api = new NuVentsBackend(this, GlobalVariables.server, "test");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -45,6 +45,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 .position(austin));
         map.setOnMarkerClickListener(markerClickListener);
         map.setOnCameraChangeListener(cameraChangeListener);
+        GlobalVariables.mapView = map;
     }
 
     @Override
@@ -82,7 +83,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     GoogleMap.OnCameraChangeListener cameraChangeListener = new GoogleMap.OnCameraChangeListener() {
         @Override
         public void onCameraChange(CameraPosition cameraPosition) {
-            Log.i("CAMERA", "CHANNNNGED");
+            GMapCamera.cameraChanged(cameraPosition);
         }
     };
 
