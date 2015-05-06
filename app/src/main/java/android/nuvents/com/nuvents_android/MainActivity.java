@@ -43,6 +43,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         map.addMarker(new MarkerOptions().title("Austin")
                 .snippet("TX")
                 .position(austin));
+        map.setOnMarkerClickListener(markerClickListener);
+        map.setOnCameraChangeListener(cameraChangeListener);
     }
 
     @Override
@@ -66,6 +68,23 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         return super.onOptionsItemSelected(item);
     }
+
+    // Google Maps Marker Click Listener
+    GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            Log.i("M TITLE", marker.getTitle());
+            return true;
+        }
+    };
+
+    // Google Maps Camera Change Listener
+    GoogleMap.OnCameraChangeListener cameraChangeListener = new GoogleMap.OnCameraChangeListener() {
+        @Override
+        public void onCameraChange(CameraPosition cameraPosition) {
+            Log.i("CAMERA", "CHANNNNGED");
+        }
+    };
 
     // MARK: NuVents Backend Methods
     @Override
