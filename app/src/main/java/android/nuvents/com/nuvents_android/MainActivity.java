@@ -1,5 +1,6 @@
 package android.nuvents.com.nuvents_android;
 
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -83,7 +84,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     GoogleMap.OnCameraChangeListener cameraChangeListener = new GoogleMap.OnCameraChangeListener() {
         @Override
         public void onCameraChange(CameraPosition cameraPosition) {
-            GMapCamera.cameraChanged(cameraPosition);
+            boolean cameraProcess = GlobalVariables.cameraProc;
+            if (!cameraProcess) { // Camera process free
+                cameraProcess = true;
+                GMapCamera.cameraChanged(cameraPosition); // Call clustering function
+                GlobalVariables.prevCam = cameraPosition; // Make current position previous position
+                cameraProcess = false;
+            }
         }
     };
 
