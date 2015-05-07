@@ -41,6 +41,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         LatLng austin = new LatLng(30.2766, -97.734);
 
         map.setMyLocationEnabled(true);
+        map.getUiSettings().setRotateGesturesEnabled(false);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(austin, 9));
 
         map.addMarker(new MarkerOptions().title("Austin")
