@@ -1,8 +1,10 @@
 package android.nuvents.com.nuvents_android;
 
+import android.graphics.Point;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.google.android.gms.maps.*;
@@ -87,7 +89,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             boolean cameraProcess = GlobalVariables.cameraProc;
             if (!cameraProcess) { // Camera process free
                 cameraProcess = true;
-                GMapCamera.cameraChanged(cameraPosition); // Call clustering function
+                Point size = new Point();
+                Display display = getWindowManager().getDefaultDisplay();
+                display.getSize(size);
+                GMapCamera.cameraChanged(cameraPosition, size); // Call clustering function
                 GlobalVariables.prevCam = cameraPosition; // Make current position previous position
                 cameraProcess = false;
             }

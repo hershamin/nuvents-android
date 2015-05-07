@@ -16,6 +16,10 @@ public class GlobalVariables extends Application {
 
     // Global constants
     public final static String server = "http://repo.nuvents.com:1026/";
+    public final static float zoomLevelMargin = (float)0.5; // User must change camera by indicated zoom level to trigger clustering
+    public final static float zoomLevelClusteringLimit = (float)14.5; // Markers cannot resize if zoom level is above that
+    public final static float nearbyEventsMargin= (float)5; // Events must be within specified meters to be combined
+    public final static float clusteringMultiplier = (float)1; // Determins the clustering behaviour of markers
 
     // Global variables
     public static ArrayList<Marker> eventMarkers = new ArrayList<Marker>();

@@ -7,6 +7,7 @@ package android.nuvents.com.nuvents_android;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.simple.JSONObject;
@@ -28,6 +29,10 @@ public class NuVentsBackend {
         nSocket = IO.socket(server);
         addSocketHandlingMethods();
         nSocket.connect();
+    }
+
+    public static BitmapDescriptor getMarkerIcon(String snippet) {
+        Log.i("print", "IMAGE");
     }
 
     // Get nearby events
