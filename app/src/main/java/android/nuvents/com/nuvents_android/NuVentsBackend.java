@@ -4,6 +4,9 @@ package android.nuvents.com.nuvents_android;
  * Created by hersh on 4/28/15.
  */
 
+import android.os.Build;
+import android.text.TextUtils;
+
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -31,6 +34,57 @@ public class NuVentsBackend {
         nSocket.connect();
     }
 
+    // Sync resources with server
+    private void syncResources() {
+        JSONObject obj = new JSONObject();
+        obj.put("did", deviceID);
+        obj.put("dm", getDeviceHardware());
+        nSocket.emit("device:initial", obj, new Emitter.Listener(){
+            @Override
+            public void call(Object... args) {
+                Object rawObj = JSONValue.parse((String)args[0]);
+                JSONObject jsonData = (JSONObject)rawObj;
+                // TODO: Sync resources
+            }
+        });
+    }
+
+    // Get device hardware type
+    private String getDeviceHardware() {
+        final String manufacturer = Build.MANUFACTURER;
+        final String model = Build.MODEL;
+        if (model.startsWith(manufacturer)) {
+            return capitalize(model);
+        }
+        if (manufacturer.equalsIgnoreCase("HTC")) {
+            // make sure "HTC" is fully capitalized.
+            return  "HTC " + model;
+        }
+        return capitalize(manufacturer) + " " + model;
+    }
+
+    // Helper function for getting device hardware type
+    private String capitalize(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return str;
+        }
+        final char[] arr = str.toCharArray();
+        boolean capitalizeNext = true;
+        String phrase = "";
+        for (final char c : arr) {
+            if (capitalizeNext && Character.isLetter(c)) {
+                phrase += Character.toUpperCase(c);
+                capitalizeNext = false;
+                continue;
+            } else if (Character.isWhitespace(c)) {
+                capitalizeNext = true;
+            }
+            phrase += c;
+        }
+        return phrase;
+    }
+
+    // Get marker icon depending on category or cluster
     public static BitmapDescriptor getMarkerIcon(String snippet) {
         Log.i("print", "IMAGE");
     }
@@ -118,6 +172,7 @@ public class NuVentsBackend {
             @Override
             public void call(Object... args) {
                 delegate.nuventsServerDidConnect();
+                syncResources();
             }
         });
         nSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
