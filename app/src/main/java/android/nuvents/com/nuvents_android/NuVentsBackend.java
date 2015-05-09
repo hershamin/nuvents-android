@@ -12,12 +12,18 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.apache.http.util.ByteArrayBuffer;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 
 public class NuVentsBackend {
@@ -76,7 +82,27 @@ public class NuVentsBackend {
 
     // Function to download from web & save
     private void downloadFile(String filePath, String url) {
-        // TODO: download file & save to specified path
+        try {
+            URL urlU = new URL(url);
+            File file = new File(filePath);
+            URLConnection uConn = urlU.openConnection();
+
+            InputStream is = uConn.getInputStream();
+            BufferedInputStream bufferInStream = new BufferedInputStream(is);
+
+            ByteArrayBuffer baf = new ByteArrayBuffer(5000);
+            int current = 0;
+            while ((current = bufferInStream.read()) != -1) {
+                baf.append((byte) current);
+            }
+
+            FileOutputStream fos =new FileOutputStream(file);
+            fos.write(baf.toByteArray());
+            fos.flush();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Get MD5SUM of file
