@@ -15,12 +15,10 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class NuVentsBackend {
 
@@ -48,33 +46,66 @@ public class NuVentsBackend {
             public void call(Object... args) {
                 Object rawObj = JSONValue.parse((String) args[0]);
                 JSONObject jsonData = (JSONObject) rawObj;
-                GlobalVariables.resources = (JSONObject)jsonData.get("resources");
-                // TODO: Sync resources
+                GlobalVariables.resources = (JSONObject) jsonData.get("resources");
+
+                // Get resources if not present on the internal file system or different
+                JSONObject types = GlobalVariables.resources;
+                for (Object type : types.keySet()) { // Resource types
+                    JSONObject resources = (JSONObject)types.get(type);
+                    for (Object resource : resources.keySet()) { // Resources
+
+                        String path = getResourcePath((String)resource, (String)type);
+                        File pathFile = new File(path);
+                        if (!pathFile.exists()) { // File does not exist
+                            downloadFile(path, (String)resources.get(resource)); // Download from provided url
+                        } else {
+                            JSONObject o1 = (JSONObject)jsonData.get("md5sum");
+                            JSONObject o2 = (JSONObject)o1.get(type);
+                            String md5sumWeb = (String)o2.get(resource);
+                            String md5sumInt = getMD5SUM(path);
+                            if (md5sumWeb != md5sumInt) { // MD5 sum does not match, redownload file
+                                downloadFile(path, (String)resources.get(resource));
+                            }
+                        }
+
+                    }
+                }
             }
         });
     }
 
+    // Function to download from web & save
+    private void downloadFile(String filePath, String url) {
+        // TODO: download file & save to specified path
+    }
+
     // Get MD5SUM of file
-    private String getMD5SUM(String filePath) throws NoSuchAlgorithmException, FileNotFoundException
-            , IOException {
-        FileInputStream fis = new FileInputStream(filePath);
-        char[] hexDigits = "0123456789abcdef".toCharArray();
-        int read = 0;
-        byte[] bytes = new byte[4096];
+    private String getMD5SUM(String filePath) {
 
-        MessageDigest digest = MessageDigest.getInstance("MD5");
-        while ((read = fis.read(bytes)) != -1) {
-            digest.update(bytes, 0, read);
+        String md5sum = "";
+        try {
+            FileInputStream fis = new FileInputStream(filePath);
+            char[] hexDigits = "0123456789abcdef".toCharArray();
+            int read = 0;
+            byte[] bytes = new byte[4096];
+
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            while ((read = fis.read(bytes)) != -1) {
+                digest.update(bytes, 0, read);
+            }
+            byte[] messageDigest = digest.digest();
+
+            StringBuilder sb = new StringBuilder(32);
+            for (byte b : messageDigest) {
+                sb.append(hexDigits[(b >> 4) & 0x0f]);
+                sb.append(hexDigits[b & 0x0f]);
+            }
+            md5sum += sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        byte[] messageDigest = digest.digest();
 
-        StringBuilder sb = new StringBuilder(32);
-        for (byte b : messageDigest) {
-            sb.append(hexDigits[(b >> 4) & 0x0f]);
-            sb.append(hexDigits[b & 0x0f]);
-        }
-
-        return sb.toString();
+        return md5sum;
     }
 
     // Get device hardware type
