@@ -10,13 +10,17 @@ import android.text.TextUtils;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class NuVentsBackend {
 
@@ -39,15 +43,38 @@ public class NuVentsBackend {
         JSONObject obj = new JSONObject();
         obj.put("did", deviceID);
         obj.put("dm", getDeviceHardware());
-        nSocket.emit("device:initial", obj, new Emitter.Listener(){
+        nSocket.emit("device:initial", obj, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                Object rawObj = JSONValue.parse((String)args[0]);
-                JSONObject jsonData = (JSONObject)rawObj;
-                GlobalVariables.resources = jsonData;
+                Object rawObj = JSONValue.parse((String) args[0]);
+                JSONObject jsonData = (JSONObject) rawObj;
+                GlobalVariables.resources = (JSONObject)jsonData.get("resources");
                 // TODO: Sync resources
             }
         });
+    }
+
+    // Get MD5SUM of file
+    private String getMD5SUM(String filePath) throws NoSuchAlgorithmException, FileNotFoundException
+            , IOException {
+        FileInputStream fis = new FileInputStream(filePath);
+        char[] hexDigits = "0123456789abcdef".toCharArray();
+        int read = 0;
+        byte[] bytes = new byte[4096];
+
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        while ((read = fis.read(bytes)) != -1) {
+            digest.update(bytes, 0, read);
+        }
+        byte[] messageDigest = digest.digest();
+
+        StringBuilder sb = new StringBuilder(32);
+        for (byte b : messageDigest) {
+            sb.append(hexDigits[(b >> 4) & 0x0f]);
+            sb.append(hexDigits[b & 0x0f]);
+        }
+
+        return sb.toString();
     }
 
     // Get device hardware type
