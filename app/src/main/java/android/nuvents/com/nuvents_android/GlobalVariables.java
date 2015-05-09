@@ -10,6 +10,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Marker;
 
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
 
 public class GlobalVariables extends Application {
@@ -26,6 +28,7 @@ public class GlobalVariables extends Application {
     public static GoogleMap mapView;
     public static CameraPosition prevCam;
     public static boolean cameraProc = false; // true if camera process is busy
+    public static JSONObject resources; // Resources returned by server
 
     private static GlobalVariables singleton;
 

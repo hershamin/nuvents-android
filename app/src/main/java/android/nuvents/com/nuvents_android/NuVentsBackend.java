@@ -44,6 +44,7 @@ public class NuVentsBackend {
             public void call(Object... args) {
                 Object rawObj = JSONValue.parse((String)args[0]);
                 JSONObject jsonData = (JSONObject)rawObj;
+                GlobalVariables.resources = jsonData;
                 // TODO: Sync resources
             }
         });
@@ -84,9 +85,13 @@ public class NuVentsBackend {
         return phrase;
     }
 
-    // Get marker icon depending on category or cluster
-    public static BitmapDescriptor getMarkerIcon(String snippet) {
-        Log.i("print", "IMAGE");
+    // Get resource from internal file system
+    public static String getResourcePath(String resource, String type) {
+        JSONObject resources = (JSONObject)GlobalVariables.resources.get(type);
+        String[] fileNameTemp = resources.get(resource).toString().split("/");
+        String fileName = type + "/" + fileNameTemp[fileNameTemp.length - 1];
+        String filePath = "resources/" + fileName;
+        return filePath;
     }
 
     // Get nearby events
