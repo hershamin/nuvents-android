@@ -29,7 +29,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         try {
-            api = new NuVentsBackend(this, GlobalVariables.server, "test");
+            String filesDir = getApplicationContext().getFilesDir().getPath();
+            api = new NuVentsBackend(this, GlobalVariables.server, "test", filesDir);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
