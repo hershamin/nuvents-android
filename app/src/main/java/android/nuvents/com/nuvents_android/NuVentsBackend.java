@@ -8,6 +8,7 @@ import android.os.Build;
 import android.text.TextUtils;
 
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Ack;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.maps.model.LatLng;
@@ -49,12 +50,12 @@ public class NuVentsBackend {
         JSONObject obj = new JSONObject();
         obj.put("did", deviceID);
         obj.put("dm", getDeviceHardware());
-        nSocket.emit("device:initial", obj, new Emitter.Listener() {
+        nSocket.emit("device:initial", obj, new Ack() {
             @Override
             public void call(Object... args) {
                 Object rawObj = JSONValue.parse((String) args[0]);
                 JSONObject jsonData = (JSONObject) rawObj;
-                GlobalVariables.resources = (JSONObject) jsonData.get("resources");
+                GlobalVariables.resources = (JSONObject) jsonData.get("resource");
 
                 // Get resources if not present on the internal file system or different
                 JSONObject types = GlobalVariables.resources;
