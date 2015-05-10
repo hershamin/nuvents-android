@@ -2,6 +2,7 @@ package android.nuvents.com.nuvents_android;
 
 import android.graphics.Point;
 import android.location.Location;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Display;
@@ -96,7 +97,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            Log.i("M TITLE", marker.getTitle());
+            Log.i("MARKER:", "Title: " + marker.getTitle() + " Snip: " + marker.getSnippet());
             return true;
         }
     };
@@ -109,8 +110,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             if (!cameraProcess) { // Camera process free
                 cameraProcess = true;
                 Point size = new Point();
-                Display display = getWindowManager().getDefaultDisplay();
-                display.getSize(size);
+                getWindowManager().getDefaultDisplay().getSize(size);
                 GMapCamera.cameraChanged(cameraPosition, size); // Call clustering function
                 GlobalVariables.prevCam = cameraPosition; // Make current position previous position
                 cameraProcess = false;
@@ -121,9 +121,20 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     // MARK: NuVents Backend Methods
     @Override
     public void nuventsServerDidReceiveNearbyEvent(JSONObject event) {
-        for (Object key : event.keySet()) {
-            Log.i("EVENT", (String)key + ": " + event.get(key).toString());
-        }
+        // Build marker
+        MarkerOptions markerOptions = new MarkerOptions().title((String)event.get("eid"))
+                .snippet((String)event.get("title"))
+                .position(new LatLng(Double.parseDouble((String)event.get("latitude")),
+                        Double.parseDouble((String)event.get("longitude"))));
+        markerOptions.icon(BitmapDescriptorFactory.fromFile(NuVentsBackend.getResourcePath(
+                markerOptions.getSnippet(), "marker")));
+        // Add to map & global variable
+        GoogleMap mapView = GlobalVariables.mapView;
+        Marker marker = mapView.addMarker(markerOptions);
+        GlobalVariables.eventMarkers.add(marker);
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        GMapCamera.clusterMarkers(mapView, mapView.getCameraPosition(), markerOptions.getTitle(), size);
     }
 
     @Override
