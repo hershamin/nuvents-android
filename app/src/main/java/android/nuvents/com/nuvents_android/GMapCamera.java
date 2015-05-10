@@ -1,10 +1,7 @@
 package android.nuvents.com.nuvents_android;
 
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
-import android.util.Log;
-import android.view.Display;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
@@ -30,7 +27,8 @@ public class GMapCamera {
 
         // Find zoom level difference
         float zoomDiff;
-        CameraPosition prevLoc =GlobalVariables.prevCam;
+        CameraPosition prevLoc = GlobalVariables.prevCam;
+        if (prevLoc == null) return; // Stop execution if previous location is not available
         if (prevLoc.zoom > position.zoom) {
             zoomDiff = prevLoc.zoom - position.zoom;
         } else {
