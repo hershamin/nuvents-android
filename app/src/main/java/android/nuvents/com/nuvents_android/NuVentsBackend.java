@@ -31,11 +31,13 @@ public class NuVentsBackend {
     private NuVentsBackendDelegate delegate;
     private String deviceID;
     private Socket nSocket;
+    private static String filesDir;
 
     // Initialization called
-    public NuVentsBackend(NuVentsBackendDelegate delegatePassed, String server, String devID) throws URISyntaxException {
+    public NuVentsBackend(NuVentsBackendDelegate delegatePassed, String server, String devID, String fileDir) throws URISyntaxException {
         delegate = delegatePassed; // Assign delegate
         deviceID = devID; // Get device ID
+        filesDir = fileDir; // Get files directory from application context
         // Socket connection handling
         nSocket = IO.socket(server);
         addSocketHandlingMethods();
@@ -172,9 +174,15 @@ public class NuVentsBackend {
     // Get resource from internal file system
     public static String getResourcePath(String resource, String type) {
         JSONObject resources = (JSONObject)GlobalVariables.resources.get(type);
+        // Create directories if not present
+        File mainDir = new File(filesDir + "/resources/" + type);
+        if (!mainDir.exists()) {
+            mainDir.mkdirs();
+        }
+        // Return file path
         String[] fileNameTemp = resources.get(resource).toString().split("/");
         String fileName = type + "/" + fileNameTemp[fileNameTemp.length - 1];
-        String filePath = "resources/" + fileName;
+        String filePath = filesDir + "/resources/" + fileName;
         return filePath;
     }
 
