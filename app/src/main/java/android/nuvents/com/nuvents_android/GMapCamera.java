@@ -125,7 +125,7 @@ public class GMapCamera {
     }
 
     // Find distance between 2 GPS points
-    private static double distanceBetween(LatLng ptA, LatLng ptB) {
+    public static double distanceBetween(LatLng ptA, LatLng ptB) {
         Location loc1 = new Location("l1");
         loc1.setLatitude(ptA.latitude);
         loc1.setLongitude(ptA.longitude);
