@@ -55,10 +55,9 @@ public class NuVentsBackend {
             public void call(Object... args) {
                 Object rawObj = JSONValue.parse((String) args[0]);
                 JSONObject jsonData = (JSONObject) rawObj;
-                GlobalVariables.resources = (JSONObject) jsonData.get("resource");
 
                 // Get resources if not present on the internal file system or different
-                JSONObject types = GlobalVariables.resources;
+                JSONObject types = (JSONObject)jsonData.get("resource");
                 for (Object type : types.keySet()) { // Resource types
                     JSONObject resources = (JSONObject)types.get(type);
                     for (Object resource : resources.keySet()) { // Resources
@@ -174,16 +173,14 @@ public class NuVentsBackend {
 
     // Get resource from internal file system
     public static String getResourcePath(String resource, String type) {
-        JSONObject resources = (JSONObject)GlobalVariables.resources.get(type);
         // Create directories if not present
-        File mainDir = new File(filesDir + "/resources/" + type);
+        String mainDirS = filesDir + "/resources/" + type;
+        File mainDir = new File(mainDirS);
         if (!mainDir.exists()) {
             mainDir.mkdirs();
         }
         // Return file path
-        String[] fileNameTemp = resources.get(resource).toString().split("/");
-        String fileName = type + "/" + fileNameTemp[fileNameTemp.length - 1];
-        String filePath = filesDir + "/resources/" + fileName;
+        String filePath = mainDirS + "/" + resource;
         return filePath;
     }
 
