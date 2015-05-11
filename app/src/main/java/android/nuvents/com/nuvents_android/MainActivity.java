@@ -55,7 +55,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     ImageButton.OnClickListener myLocBtnPressed = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.i("Button", "MY LOCATION");
+            GoogleMap mapView = GlobalVariables.mapView;
+            Location loc = mapView.getMyLocation();
+            mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(),
+                    loc.getLongitude()), 15));
         }
     };
 
@@ -152,7 +155,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             if (serverConn && !initialLoc) {
                 GoogleMap mapView = GlobalVariables.mapView;
                 LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-                mapView.moveCamera(CameraUpdateFactory.newLatLng(loc));
+                mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 13));
                 Projection projection = mapView.getProjection();
                 LatLng topLeftCorner = projection.fromScreenLocation(new Point(0, 0));
                 float dist = (float)GMapCamera.distanceBetween(loc, topLeftCorner);
