@@ -11,6 +11,9 @@ import android.view.MenuItem;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import org.json.simple.JSONObject;
 
@@ -22,12 +25,18 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public NuVentsBackend api;
     public boolean serverConn = false;
     public boolean initialLoc = false;
+    Point size = new Point();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Init vars
+        getWindowManager().getDefaultDisplay().getSize(size); // Get window size
+        RelativeLayout relL = (RelativeLayout) findViewById(R.id.mapViewLayout); // Get layout
+
+        // MapView
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -38,7 +47,43 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             e.printStackTrace();
         }
 
+        // My Location button
+        ImageButton myLocBtn = new ImageButton(this);
+        Bitmap myLocImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon"));
+        myLocBtn.setImageBitmap(myLocImg);
+        myLocBtn.setBackgroundDrawable(null);
+        myLocBtn.setX((float) 0.1 * size.x);
+        myLocBtn.setY((float) 0.85 * size.y);
+        myLocBtn.setOnClickListener(myLocBtnPressed);
+        relL.addView(myLocBtn);
+
+        // List View button
+        ImageButton listViewBtn = new ImageButton(this);
+        Bitmap listViewImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
+        listViewBtn.setImageBitmap(listViewImg);
+        listViewBtn.setBackgroundDrawable(null);
+        listViewBtn.setX((float) 0.65 * size.x);
+        listViewBtn.setY((float) 0.85 * size.y);
+        listViewBtn.setOnClickListener(listViewBtnPressed);
+        relL.addView(listViewBtn);
+
     }
+
+    // My location button pressed
+    ImageButton.OnClickListener myLocBtnPressed = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.i("Button", "MY LOCATION");
+        }
+    };
+
+    // List view button pressed
+    ImageButton.OnClickListener listViewBtnPressed = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.i("Button", "LIST VIEW");
+        }
+    };
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -110,8 +155,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             boolean cameraProcess = GlobalVariables.cameraProc;
             if (!cameraProcess) { // Camera process free
                 cameraProcess = true;
-                Point size = new Point();
-                getWindowManager().getDefaultDisplay().getSize(size);
                 GMapCamera.cameraChanged(cameraPosition, size); // Call clustering function
                 GlobalVariables.prevCam = cameraPosition; // Make current position previous position
                 cameraProcess = false;
