@@ -1,5 +1,7 @@
 package android.nuvents.com.nuvents_android;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
 
@@ -91,21 +93,21 @@ public class GMapCamera {
                         for (int k=0; k<tempIndices.size(); k++) {
                             if (k != randomIndex && specialEID == null) {
                                 Marker marker = markers.get(tempIndices.get(k));
-                                marker.setIcon(BitmapDescriptorFactory.fromFile(
-                                        NuVentsBackend.getResourcePath("cluster", "marker")
-                                ));
+                                Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
+                                        .getResourcePath("cluster", "marker"));
+                                marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
                             } else if (specialEID != null && markers.get(tempIndices.get(k)).getTitle() == specialEID) {
                                 // marker to keep bigger
                                 Marker marker = markers.get(tempIndices.get(k));
-                                marker.setIcon(BitmapDescriptorFactory.fromFile(
-                                        NuVentsBackend.getResourcePath(marker.getSnippet(), "marker")
-                                ));
+                                Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
+                                        .getResourcePath(marker.getSnippet(), "marker"));
+                                marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
                             } else {
                                 // marker to keep bigger
                                 Marker marker = markers.get(tempIndices.get(k));
-                                marker.setIcon(BitmapDescriptorFactory.fromFile(
-                                        NuVentsBackend.getResourcePath(marker.getSnippet(), "marker")
-                                ));
+                                Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
+                                        .getResourcePath(marker.getSnippet(), "marker"));
+                                marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
                             }
                         }
                     }
@@ -117,9 +119,9 @@ public class GMapCamera {
             // Zoom level is greater than equal to ZoomLevel clustering limit
             //  Return all markers to original specs
             for (Marker marker : markers) {
-                marker.setIcon(BitmapDescriptorFactory.fromFile(
-                        NuVentsBackend.getResourcePath(marker.getSnippet(), "marker")
-                ));
+                Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
+                        .getResourcePath(marker.getSnippet(), "marker"));
+                marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
             }
         }
     }

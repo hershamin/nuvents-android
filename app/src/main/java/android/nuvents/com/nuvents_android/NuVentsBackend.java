@@ -183,7 +183,7 @@ public class NuVentsBackend {
         String filePath = mainDirS + "/" + resource;
         // Check if marker icon exists if not send a default one
         File filepathF = new File(filePath);
-        if (!filepathF.exists() && resource.equals("marker")) {
+        if (!filepathF.exists() && type.equals("marker")) {
             filePath = mainDirS + "/default";
         }
         return filePath;

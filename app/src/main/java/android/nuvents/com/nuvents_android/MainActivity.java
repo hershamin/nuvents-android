@@ -1,11 +1,11 @@
 package android.nuvents.com.nuvents_android;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
-import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.google.android.gms.maps.*;
@@ -123,19 +123,26 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     @Override
     public void nuventsServerDidReceiveNearbyEvent(JSONObject event) {
         // Build marker
-        MarkerOptions markerOptions = new MarkerOptions().title((String)event.get("eid"))
+        Double latitude = Double.parseDouble(event.get("latitude").toString());
+        Double longitude = Double.parseDouble(event.get("longitude").toString());
+        String mapSnippet = (String)event.get("title");
+        Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath(mapSnippet, "marker"));
+        final MarkerOptions markerOptions = new MarkerOptions().title((String)event.get("eid"))
                 .snippet((String)event.get("title"))
-                .position(new LatLng(Double.parseDouble((String)event.get("latitude")),
-                        Double.parseDouble((String)event.get("longitude"))));
-        markerOptions.icon(BitmapDescriptorFactory.fromFile(NuVentsBackend.getResourcePath(
-                markerOptions.getSnippet(), "marker")));
+                .position(new LatLng(latitude, longitude))
+                .icon(BitmapDescriptorFactory.fromBitmap(markerIcon));
         // Add to map & global variable
-        GoogleMap mapView = GlobalVariables.mapView;
-        Marker marker = mapView.addMarker(markerOptions);
-        GlobalVariables.eventMarkers.add(marker);
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        GMapCamera.clusterMarkers(mapView, mapView.getCameraPosition(), markerOptions.getTitle(), size);
+        final GoogleMap mapView = GlobalVariables.mapView;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Marker marker = mapView.addMarker(markerOptions);
+                GlobalVariables.eventMarkers.add(marker);
+                Point size = new Point();
+                getWindowManager().getDefaultDisplay().getSize(size);
+                GMapCamera.clusterMarkers(mapView, mapView.getCameraPosition(), markerOptions.getTitle(), size);
+            }
+        });
     }
 
     @Override
