@@ -26,6 +26,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public boolean serverConn = false;
     public boolean initialLoc = false;
     Point size = new Point();
+    ImageButton myLocBtn;
+    ImageButton listViewBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,35 +106,40 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     // NuVents server resources sync complete
     @Override
     public void nuventsServerDidSyncResources() {
-        JSONObject config= GlobalVariables.config; // get config
+        final JSONObject config= GlobalVariables.config; // get config
 
-        // icons
-        Bitmap myLocImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon"));
+        // Icons
+        final Bitmap myLocImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon"));
         final Bitmap listViewImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
-
-        // My Location button
-        final ImageButton myLocBtn = new ImageButton(this);
-        myLocBtn.setImageBitmap(myLocImg);
-        myLocBtn.setBackgroundDrawable(null);
-        myLocBtn.setX(Float.parseFloat((String)config.get("myLocBtnX")) * size.x);
-        myLocBtn.setY(Float.parseFloat((String)config.get("myLocBtnY")) * size.y);
-        myLocBtn.setOnClickListener(myLocBtnPressed);
-
-        // List View button
-        final ImageButton listViewBtn = new ImageButton(this);
-        listViewBtn.setImageBitmap(listViewImg);
-        listViewBtn.setBackgroundDrawable(null);
-        listViewBtn.setX(Float.parseFloat((String)config.get("listViewBtnX")) * size.x);
-        listViewBtn.setY(Float.parseFloat((String)config.get("listViewBtnY")) * size.y);
-        listViewBtn.setOnClickListener(listViewBtnPressed);
 
         // Add views to hierarchy
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 RelativeLayout relL = (RelativeLayout)findViewById(R.id.mapViewLayout); // Get layout
-                relL.addView(myLocBtn);
-                relL.addView(listViewBtn);
+
+                // My Location Button
+                if (myLocBtn == null) {
+                    myLocBtn = new ImageButton(getApplicationContext());
+                    myLocBtn.setOnClickListener(myLocBtnPressed);
+                    relL.addView(myLocBtn);
+                }
+                myLocBtn.setImageBitmap(myLocImg);
+                myLocBtn.setBackgroundDrawable(null);
+                myLocBtn.setX(Float.parseFloat((String) config.get("myLocBtnX")) * size.x);
+                myLocBtn.setY(Float.parseFloat((String) config.get("myLocBtnY")) * size.y);
+
+                // List View Button
+                if (listViewBtn == null) {
+                    listViewBtn = new ImageButton(getApplicationContext());
+                    listViewBtn.setOnClickListener(listViewBtnPressed);
+                    relL.addView(listViewBtn);
+                }
+                listViewBtn.setImageBitmap(listViewImg);
+                listViewBtn.setBackgroundDrawable(null);
+                listViewBtn.setX(Float.parseFloat((String) config.get("listViewBtnX")) * size.x);
+                listViewBtn.setY(Float.parseFloat((String) config.get("listViewBtnY")) * size.y);
+
             }
         });
     }
