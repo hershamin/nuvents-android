@@ -8,6 +8,9 @@ import org.json.simple.JSONObject;
 
 public interface NuVentsBackendDelegate {
 
+    // Resources ready
+    public void nuventsServerDidSyncResources();                            // Resources are synced with device
+
     // Client Request
     public void nuventsServerDidReceiveNearbyEvent(JSONObject event);       // Got nearby event
     public void nuventsServerDidReceiveEventDetail(JSONObject event);       // Got event detail

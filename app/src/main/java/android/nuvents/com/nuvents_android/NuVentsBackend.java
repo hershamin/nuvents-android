@@ -55,6 +55,7 @@ public class NuVentsBackend {
             public void call(Object... args) {
                 Object rawObj = JSONValue.parse((String) args[0]);
                 JSONObject jsonData = (JSONObject) rawObj;
+                GlobalVariables.config = (JSONObject)jsonData.get("config");
 
                 // Get resources if not present on the internal file system or different
                 JSONObject types = (JSONObject)jsonData.get("resource");
@@ -78,6 +79,7 @@ public class NuVentsBackend {
 
                     }
                 }
+                delegate.nuventsServerDidSyncResources();
             }
         });
     }

@@ -34,7 +34,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         // Init vars
         getWindowManager().getDefaultDisplay().getSize(size); // Get window size
-        RelativeLayout relL = (RelativeLayout) findViewById(R.id.mapViewLayout); // Get layout
 
         // MapView
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
@@ -46,26 +45,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-
-        // My Location button
-        ImageButton myLocBtn = new ImageButton(this);
-        Bitmap myLocImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon"));
-        myLocBtn.setImageBitmap(myLocImg);
-        myLocBtn.setBackgroundDrawable(null);
-        myLocBtn.setX((float) 0.1 * size.x);
-        myLocBtn.setY((float) 0.85 * size.y);
-        myLocBtn.setOnClickListener(myLocBtnPressed);
-        relL.addView(myLocBtn);
-
-        // List View button
-        ImageButton listViewBtn = new ImageButton(this);
-        Bitmap listViewImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
-        listViewBtn.setImageBitmap(listViewImg);
-        listViewBtn.setBackgroundDrawable(null);
-        listViewBtn.setX((float) 0.65 * size.x);
-        listViewBtn.setY((float) 0.85 * size.y);
-        listViewBtn.setOnClickListener(listViewBtnPressed);
-        relL.addView(listViewBtn);
 
     }
 
@@ -120,6 +99,42 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // NuVents server resources sync complete
+    @Override
+    public void nuventsServerDidSyncResources() {
+        JSONObject config= GlobalVariables.config; // get config
+
+        // icons
+        Bitmap myLocImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon"));
+        final Bitmap listViewImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
+
+        // My Location button
+        final ImageButton myLocBtn = new ImageButton(this);
+        myLocBtn.setImageBitmap(myLocImg);
+        myLocBtn.setBackgroundDrawable(null);
+        myLocBtn.setX(Float.parseFloat((String)config.get("myLocBtnX")) * size.x);
+        myLocBtn.setY(Float.parseFloat((String)config.get("myLocBtnY")) * size.y);
+        myLocBtn.setOnClickListener(myLocBtnPressed);
+
+        // List View button
+        final ImageButton listViewBtn = new ImageButton(this);
+        listViewBtn.setImageBitmap(listViewImg);
+        listViewBtn.setBackgroundDrawable(null);
+        listViewBtn.setX(Float.parseFloat((String)config.get("listViewBtnX")) * size.x);
+        listViewBtn.setY(Float.parseFloat((String)config.get("listViewBtnY")) * size.y);
+        listViewBtn.setOnClickListener(listViewBtnPressed);
+
+        // Add views to hierarchy
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                RelativeLayout relL = (RelativeLayout)findViewById(R.id.mapViewLayout); // Get layout
+                relL.addView(myLocBtn);
+                relL.addView(listViewBtn);
+            }
+        });
     }
 
     // Google Maps did get my location
@@ -181,8 +196,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void run() {
                 Marker marker = mapView.addMarker(markerOptions);
                 GlobalVariables.eventMarkers.add(marker);
-                Point size = new Point();
-                getWindowManager().getDefaultDisplay().getSize(size);
                 GMapCamera.clusterMarkers(mapView, mapView.getCameraPosition(), markerOptions.getTitle(), size);
             }
         });
