@@ -66,7 +66,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     ImageButton.OnClickListener listViewBtnPressed = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.i("Button", "LIST VIEW");
+            Intent detailView = new Intent(getApplicationContext(), ListView.class);
+            startActivity(detailView);
         }
     };
 
