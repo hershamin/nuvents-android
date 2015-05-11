@@ -13,6 +13,8 @@ import com.google.android.gms.maps.model.Marker;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GlobalVariables extends Application {
 
@@ -25,10 +27,13 @@ public class GlobalVariables extends Application {
 
     // Global variables
     public static ArrayList<Marker> eventMarkers = new ArrayList<Marker>();
+    public static Map<String, JSONObject> eventJson = new HashMap<String, JSONObject>();
     public static GoogleMap mapView;
     public static CameraPosition prevCam;
     public static boolean cameraProc = false; // true if camera process is busy
     public static JSONObject config; // Configuration from server
+    public static Marker tempMarker; // Temp marker to pass to detail view
+    public static JSONObject tempJson; // Temp event json to pass to detail view
 
     private static GlobalVariables singleton;
 

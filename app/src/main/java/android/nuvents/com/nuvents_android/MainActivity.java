@@ -1,5 +1,6 @@
 package android.nuvents.com.nuvents_android;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -165,7 +166,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            Log.i("MARKER:", "Title: " + marker.getTitle() + " Snip: " + marker.getSnippet());
+            Intent detailView = new Intent(getApplicationContext(), DetailView.class);
+            GlobalVariables.tempMarker = marker;
+            GlobalVariables.tempJson = GlobalVariables.eventJson.get(marker.getTitle());
+            startActivity(detailView);
             return true;
         }
     };
@@ -187,6 +191,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     // MARK: NuVents Backend Methods
     @Override
     public void nuventsServerDidReceiveNearbyEvent(JSONObject event) {
+        // Add to global vars
+        GlobalVariables.eventJson.put((String)event.get("eid"), event);
         // Build marker
         Double latitude = Double.parseDouble(event.get("latitude").toString());
         Double longitude = Double.parseDouble(event.get("longitude").toString());
