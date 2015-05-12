@@ -32,7 +32,6 @@ public class GlobalVariables extends Application {
     public static CameraPosition prevCam;
     public static boolean cameraProc = false; // true if camera process is busy
     public static JSONObject config; // Configuration from server
-    public static Marker tempMarker; // Temp marker to pass to detail view
     public static JSONObject tempJson; // Temp event json to pass to detail view
 
     private static GlobalVariables singleton;

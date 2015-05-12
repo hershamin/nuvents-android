@@ -14,7 +14,6 @@ import org.json.simple.JSONObject;
 public class DetailView extends ActionBarActivity {
 
     JSONObject json; // Event variable to be passed
-    Marker marker; // Event marker
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +22,8 @@ public class DetailView extends ActionBarActivity {
 
         // Collect vars
         json = GlobalVariables.tempJson;
-        marker = GlobalVariables.tempMarker;
 
         Log.i("JSON", json.toString());
-        Log.i("Marker", marker.getSnippet());
 
     }
 

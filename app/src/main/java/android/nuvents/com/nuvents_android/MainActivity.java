@@ -170,10 +170,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            Intent detailView = new Intent(getApplicationContext(), DetailView.class);
-            GlobalVariables.tempMarker = marker;
-            GlobalVariables.tempJson = GlobalVariables.eventJson.get(marker.getTitle());
-            startActivity(detailView);
+            api.getEventDetail(marker.getTitle(), new JSONCallable() {
+                @Override
+                public void json(JSONObject jsonData) {
+                    Intent detailView = new Intent(getApplicationContext(), DetailView.class);
+                    GlobalVariables.tempJson = jsonData;
+                    startActivity(detailView);
+                }
+            });
             return true;
         }
     };

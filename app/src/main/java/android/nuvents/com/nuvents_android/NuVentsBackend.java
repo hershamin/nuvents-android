@@ -6,6 +6,7 @@ package android.nuvents.com.nuvents_android;
 
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Ack;
@@ -26,6 +27,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
+import java.util.concurrent.Callable;
 
 public class NuVentsBackend {
 
@@ -46,42 +48,32 @@ public class NuVentsBackend {
     }
 
     // Sync resources with server
-    private void syncResources() {
-        JSONObject obj = new JSONObject();
-        obj.put("did", deviceID);
-        obj.put("dm", getDeviceHardware());
-        nSocket.emit("device:initial", obj, new Ack() {
-            @Override
-            public void call(Object... args) {
-                Object rawObj = JSONValue.parse((String) args[0]);
-                JSONObject jsonData = (JSONObject) rawObj;
-                GlobalVariables.config = (JSONObject)jsonData.get("config");
+    private void syncResources(JSONObject jsonData) {
+        GlobalVariables.config = (JSONObject)jsonData.get("config");
 
-                // Get resources if not present on the internal file system or different
-                JSONObject types = (JSONObject)jsonData.get("resource");
-                for (Object type : types.keySet()) { // Resource types
-                    JSONObject resources = (JSONObject)types.get(type);
-                    for (Object resource : resources.keySet()) { // Resources
+        // Get resources if not present on the internal file system or different
+        JSONObject types = (JSONObject)jsonData.get("resource");
+        for (Object type : types.keySet()) { // Resource types
+            JSONObject resources = (JSONObject)types.get(type);
+            for (Object resource : resources.keySet()) { // Resources
 
-                        String path = getResourcePath((String)resource, (String)type);
-                        File pathFile = new File(path);
-                        if (!pathFile.exists()) { // File does not exist
-                            downloadFile(path, (String)resources.get(resource)); // Download from provided url
-                        } else {
-                            JSONObject o1 = (JSONObject)jsonData.get("md5sum");
-                            JSONObject o2 = (JSONObject)o1.get(type);
-                            String md5sumWeb = (String)o2.get(resource);
-                            String md5sumInt = getMD5SUM(path);
-                            if (md5sumWeb != md5sumInt) { // MD5 sum does not match, redownload file
-                                downloadFile(path, (String)resources.get(resource));
-                            }
-                        }
-
+                String path = getResourcePath((String)resource, (String)type);
+                File pathFile = new File(path);
+                if (!pathFile.exists()) { // File does not exist
+                    downloadFile(path, (String)resources.get(resource)); // Download from provided url
+                } else {
+                    JSONObject o1 = (JSONObject)jsonData.get("md5sum");
+                    JSONObject o2 = (JSONObject)o1.get(type);
+                    String md5sumWeb = (String)o2.get(resource);
+                    String md5sumInt = getMD5SUM(path);
+                    if (md5sumWeb != md5sumInt) { // MD5 sum does not match, redownload file
+                       downloadFile(path, (String)resources.get(resource));
                     }
                 }
-                delegate.nuventsServerDidSyncResources();
+
             }
-        });
+        }
+        delegate.nuventsServerDidSyncResources();
     }
 
     // Function to download from web & save
@@ -202,11 +194,23 @@ public class NuVentsBackend {
     }
 
     // Get event detail
-    public void getEventDetail(String eventID) {
+    public void getEventDetail(String eventID, final JSONCallable callback) {
         JSONObject obj = new JSONObject();
         obj.put("eid", eventID);
         obj.put("did", deviceID);
-        nSocket.emit("event:detail", obj);
+        nSocket.emit("event:detail", obj, new Ack() {
+            @Override
+            public void call(Object... args) {
+                String retStr = (String)args[0];
+                if (!retStr.contains("Error")) {
+                    Object rawObj = JSONValue.parse(retStr);
+                    JSONObject obj = (JSONObject)rawObj;
+                    callback.json(obj);
+                } else {
+                    // TODO: Handle ERROR
+                }
+            }
+        });
     }
 
     public void pingServer() { // Ping server for sanity check
@@ -238,25 +242,15 @@ public class NuVentsBackend {
             }
         });
 
-        // Detail Event Received
-        nSocket.on("event:detail", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                Object rawObj = JSONValue.parse((String)args[0]);
-                JSONObject obj = (JSONObject)rawObj;
-                delegate.nuventsServerDidReceiveEventDetail(obj);
-            }
-        });
-
-        // Detail Event Error & Status
-        nSocket.on("event:detail:status", new Emitter.Listener() {
+        // Resources status
+        nSocket.on("resources:status", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 String resp = (String)args[0];
                 if (resp.contains("Error")) { // error status
-                    delegate.nuventsServerDidReceiveError("Event Detail", resp);
+                    delegate.nuventsServerDidReceiveError("Resources", resp);
                 } else {
-                    delegate.nuventsServerDidReceiveStatus("Event Detail", resp);
+                    delegate.nuventsServerDidReceiveStatus("Resources", resp);
                 }
             }
         });
@@ -269,12 +263,25 @@ public class NuVentsBackend {
             }
         });
 
+        // Received resources from server
+        nSocket.on("resources", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Object rawObj = JSONValue.parse((String)args[0]);
+                JSONObject obj = (JSONObject)rawObj;
+                syncResources(obj);
+            }
+        });
+
         // Connection Status
         nSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 delegate.nuventsServerDidConnect();
-                syncResources();
+                JSONObject obj = new JSONObject();
+                obj.put("did", deviceID);
+                obj.put("dm", getDeviceHardware());
+                nSocket.emit("device:initial", obj);
             }
         });
         nSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
