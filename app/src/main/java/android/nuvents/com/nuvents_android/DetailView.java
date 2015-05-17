@@ -10,8 +10,11 @@ import android.webkit.WebViewClient;
 import org.json.simple.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 
 
 public class DetailView extends ActionBarActivity {
@@ -26,6 +29,19 @@ public class DetailView extends ActionBarActivity {
 
         // Collect vars
         json = GlobalVariables.tempJson;
+
+        // Write event json to file /data
+        String fileS = NuVentsBackend.getResourcePath("tmp", "tmp").replace("tmp/tmp", "") + "data";
+        File file = new File(fileS);
+        try {
+            if (!file.exists()) file.createNewFile();
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(json.toString());
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         loadPartialView();
 
