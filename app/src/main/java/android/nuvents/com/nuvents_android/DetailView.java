@@ -1,13 +1,11 @@
 package android.nuvents.com.nuvents_android;
 
-import android.graphics.Point;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.RelativeLayout;
 
 import org.json.simple.JSONObject;
 
@@ -64,7 +62,7 @@ public class DetailView extends ActionBarActivity {
                 baseURL = baseURL.replace("tmp/tmp", "");
                 String fileURL = NuVentsBackend.getResourcePath("detailView", "html"); // Detail view html
                 String htmlStr = getStringFromFile(fileURL);
-                webView.loadDataWithBaseURL(baseURL, htmlStr, "text/html", null, null);
+                webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);
             }
         });
     }
@@ -86,7 +84,7 @@ public class DetailView extends ActionBarActivity {
                 baseURL = baseURL.replace("tmp/tmp", "");
                 String fileURL = NuVentsBackend.getResourcePath("partialView", "html"); // Partial view html
                 String htmlStr = getStringFromFile(fileURL);
-                webView.loadDataWithBaseURL(baseURL, htmlStr, "text/html", null, null);
+                webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);
             }
         });
     }
