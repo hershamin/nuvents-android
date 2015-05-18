@@ -45,12 +45,12 @@ public class DetailView extends ActionBarActivity {
         WebView webView = new WebView(getApplicationContext());
         webView.setWebViewClient(new UIWebView());
         webView.getSettings().setJavaScriptEnabled(true);
-        setContentView(webView);
         String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp");
         baseURL = baseURL.replace("tmp/tmp", "");
         String fileURL = NuVentsBackend.getResourcePath("detailView", "html");
         String htmlStr = getStringFromFile(fileURL);
         webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);
+        setContentView(webView);
     }
 
     @Override
