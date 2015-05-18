@@ -14,13 +14,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.OutputStreamWriter;
 
 
 public class DetailView extends ActionBarActivity {
 
     JSONObject json; // Event variable to be passed
-    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +41,16 @@ public class DetailView extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        loadPartialView();
-
+        // Load webview
+        WebView webView = new WebView(getApplicationContext());
+        webView.setWebViewClient(new UIWebView());
+        webView.getSettings().setJavaScriptEnabled(true);
+        setContentView(webView);
+        String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp");
+        baseURL = baseURL.replace("tmp/tmp", "");
+        String fileURL = NuVentsBackend.getResourcePath("detailView", "html");
+        String htmlStr = getStringFromFile(fileURL);
+        webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);
     }
 
     @Override
@@ -69,42 +75,6 @@ public class DetailView extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // Load detail view
-    private void loadDetailView() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp"); // Base URL: resources dir
-                baseURL = baseURL.replace("tmp/tmp", "");
-                String fileURL = NuVentsBackend.getResourcePath("detailView", "html"); // Detail view html
-                String htmlStr = getStringFromFile(fileURL);
-                webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);
-            }
-        });
-    }
-
-    // Load partial view
-    private void loadPartialView() {
-        // Add views if not present to the hierarchy
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // Add webview
-                if (webView == null) {
-                    webView = new WebView(getApplicationContext());
-                    webView.setWebViewClient(new UIWebView());
-                    webView.getSettings().setJavaScriptEnabled(true);
-                    setContentView(webView);
-                }
-                String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp"); // Base URL: resources dir
-                baseURL = baseURL.replace("tmp/tmp", "");
-                String fileURL = NuVentsBackend.getResourcePath("partialView", "html"); // Partial view html
-                String htmlStr = getStringFromFile(fileURL);
-                webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);
-            }
-        });
-    }
-
     // Helper method to get string from file
     private String getStringFromFile(String filePath) {
         StringBuilder output = new StringBuilder();
@@ -126,13 +96,7 @@ public class DetailView extends ActionBarActivity {
     private class UIWebView extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView webView, String url) {
-            if (url.contains("openDetailView://")) {
-                loadDetailView();
-                return true;
-            } else if (url.contains("closeDetailView://")) {
-                loadPartialView();
-                return true;
-            } else if (url.contains("closePartialView://")) {
+            if (url.contains("closeDetailView://")) {
                 finish();
                 return true;
             } else {
