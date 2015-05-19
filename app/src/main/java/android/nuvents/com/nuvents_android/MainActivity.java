@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         // Init mapview/listview btn
-        mapListViewBtn.setOnClickListener(mapViewBtnPressed);
+        mapListViewBtn.setOnClickListener(listViewBtnPressed);
         webView.setVisibility(View.INVISIBLE);
         myLocBtn.setVisibility(View.VISIBLE);
 
@@ -202,7 +202,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         // Icons
         final Bitmap myLoc = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon"));
-        final Bitmap mapList = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("mapView", "icon"));
+        final Bitmap mapList = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
         final Bitmap statusBar = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("statusBar", "icon"));
         final Bitmap navBar = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("navBar", "icon"));
 
