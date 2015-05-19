@@ -95,7 +95,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             myLocBtn.setVisibility(View.INVISIBLE);
             Bitmap mapListImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("mapView", "icon"));
             mapListViewBtn.setImageBitmap(mapListImg);
-            mapListViewBtn.setBackgroundDrawable(null);
             mapListViewBtn.setOnClickListener(null);
             mapListViewBtn.setOnClickListener(mapViewBtnPressed);
 
@@ -139,7 +138,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             myLocBtn.setVisibility(View.VISIBLE);
             Bitmap mapListImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
             mapListViewBtn.setImageBitmap(mapListImg);
-            mapListViewBtn.setBackgroundDrawable(null);
             mapListViewBtn.setOnClickListener(null);
             mapListViewBtn.setOnClickListener(listViewBtnPressed);
         }

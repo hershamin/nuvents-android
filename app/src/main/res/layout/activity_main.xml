@@ -10,21 +10,27 @@
         <ImageView
             android:id="@+id/statusBarImg"
             android:layout_width="fill_parent"
-            android:layout_height="20dp" />
+            android:layout_height="20dp"
+            android:scaleType="fitXY"
+            android:background="@null" />
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="60dp">
             <ImageView
                 android:id="@+id/navBarImg"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:background="@null" />
             <ImageButton
                 android:id="@+id/mapListViewBtn"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="2dp"
                 android:layout_marginTop="15dp"
                 android:layout_width="77dp"
-                android:layout_height="30dp" />
+                android:layout_height="30dp"
+                android:scaleType="fitXY"
+                android:background="@null" />
         </RelativeLayout>
     </LinearLayout>
     <RelativeLayout
@@ -46,6 +52,8 @@
             android:layout_marginLeft="23dp"
             android:layout_marginBottom="33dp"
             android:layout_width="66dp"
-            android:layout_height="67dp" />
+            android:layout_height="67dp"
+            android:scaleType="fitXY"
+            android:background="@null" />
     </RelativeLayout>
 </LinearLayout>
