@@ -52,6 +52,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         statusBarImg = (ImageView) findViewById(R.id.statusBarImg);
         navBarImg = (ImageView) findViewById(R.id.navBarImg);
         webView = (WebView) findViewById(R.id.webView);
+        myLocBtn.setOnClickListener(myLocBtnPressed);
+        webView.setWebViewClient(new UIWebView());
+        webView.getSettings().setJavaScriptEnabled(true);
 
         // MapView
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
