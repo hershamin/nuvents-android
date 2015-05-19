@@ -49,7 +49,6 @@ public class NuVentsBackend {
 
     // Sync resources with server
     private void syncResources(JSONObject jsonData) {
-        GlobalVariables.config = (JSONObject)jsonData.get("config");
 
         // Get resources if not present on the internal file system or different
         JSONObject types = (JSONObject)jsonData.get("resource");

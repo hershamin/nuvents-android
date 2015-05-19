@@ -13,11 +13,18 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 
 import org.json.simple.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.URISyntaxException;
 
 
@@ -28,7 +35,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public boolean initialLoc = false;
     Point size = new Point();
     ImageButton myLocBtn;
-    ImageButton listViewBtn;
+    ImageButton mapListViewBtn;
+    ImageView statusBarImg;
+    ImageView navBarImg;
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +47,22 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         // Init vars
         getWindowManager().getDefaultDisplay().getSize(size); // Get window size
+        myLocBtn = (ImageButton) findViewById(R.id.myLocBtn);
+        mapListViewBtn = (ImageButton) findViewById(R.id.mapListViewBtn);
+        statusBarImg = (ImageView) findViewById(R.id.statusBarImg);
+        navBarImg = (ImageView) findViewById(R.id.navBarImg);
+        webView = (WebView) findViewById(R.id.webView);
 
         // MapView
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        // Init mapview/listview btn
+        mapListViewBtn.setOnClickListener(mapViewBtnPressed);
+        webView.setVisibility(View.INVISIBLE);
+        myLocBtn.setVisibility(View.VISIBLE);
+
+        // Init NuVents backend API
         try {
             String filesDir = getApplicationContext().getFilesDir().getPath();
             api = new NuVentsBackend(this, GlobalVariables.server, "test", filesDir);
@@ -66,10 +87,74 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     ImageButton.OnClickListener listViewBtnPressed = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent detailView = new Intent(getApplicationContext(), ListView.class);
-            startActivity(detailView);
+            // UI Setup
+            webView.setVisibility(View.VISIBLE);
+            myLocBtn.setVisibility(View.INVISIBLE);
+            Bitmap mapListImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("mapView", "icon"));
+            mapListViewBtn.setImageBitmap(mapListImg);
+            mapListViewBtn.setBackgroundDrawable(null);
+            mapListViewBtn.setOnClickListener(null);
+            mapListViewBtn.setOnClickListener(mapViewBtnPressed);
+
+            // write events json to file /data
+            String fileS = NuVentsBackend.getResourcePath("tmp", "tmp").replace("tmp/tmp", "") + "data";
+            File file = new File(fileS);
+            try {
+                if (!file.exists()) file.createNewFile();
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(GlobalVariables.eventJson.toString().replaceAll("=",":"));
+                bw.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp");
+            baseURL = baseURL.replace("tmp/tmp", "");
+            String fileURL = NuVentsBackend.getResourcePath("listView", "html");
+            StringBuilder htmlStr = new StringBuilder();
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(new File(fileURL)));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    htmlStr.append(line);
+                }
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            webView.loadDataWithBaseURL("file://" + baseURL, htmlStr.toString(), "text/html", null, null);
         }
     };
+
+    // Map view button pressed
+    ImageButton.OnClickListener mapViewBtnPressed = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // UI Setup
+            webView.setVisibility(View.INVISIBLE);
+            myLocBtn.setVisibility(View.VISIBLE);
+            Bitmap mapListImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
+            mapListViewBtn.setImageBitmap(mapListImg);
+            mapListViewBtn.setBackgroundDrawable(null);
+            mapListViewBtn.setOnClickListener(null);
+            mapListViewBtn.setOnClickListener(listViewBtnPressed);
+        }
+    };
+
+    // Webview delegate methods
+    private class UIWebView extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView webView, String url) {
+            if (url.contains("openDetailView://")) {
+                String eid = url.split("//")[1];
+                openDetailView(eid);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -111,40 +196,21 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     // NuVents server resources sync complete
     @Override
     public void nuventsServerDidSyncResources() {
-        final JSONObject config= GlobalVariables.config; // get config
 
         // Icons
-        final Bitmap myLocImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon"));
-        final Bitmap listViewImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
+        final Bitmap myLoc = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon"));
+        final Bitmap mapList = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("mapView", "icon"));
+        final Bitmap statusBar = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("statusBar", "icon"));
+        final Bitmap navBar = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("navBar", "icon"));
 
         // Add views to hierarchy
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                RelativeLayout relL = (RelativeLayout)findViewById(R.id.mapViewLayout); // Get layout
-
-                // My Location Button
-                if (myLocBtn == null) {
-                    myLocBtn = new ImageButton(getApplicationContext());
-                    myLocBtn.setOnClickListener(myLocBtnPressed);
-                    relL.addView(myLocBtn);
-                }
-                myLocBtn.setImageBitmap(myLocImg);
-                myLocBtn.setBackgroundDrawable(null);
-                myLocBtn.setX(Float.parseFloat((String) config.get("myLocBtnX")) * size.x);
-                myLocBtn.setY(Float.parseFloat((String) config.get("myLocBtnY")) * size.y);
-
-                // List View Button
-                if (listViewBtn == null) {
-                    listViewBtn = new ImageButton(getApplicationContext());
-                    listViewBtn.setOnClickListener(listViewBtnPressed);
-                    relL.addView(listViewBtn);
-                }
-                listViewBtn.setImageBitmap(listViewImg);
-                listViewBtn.setBackgroundDrawable(null);
-                listViewBtn.setX(Float.parseFloat((String) config.get("listViewBtnX")) * size.x);
-                listViewBtn.setY(Float.parseFloat((String) config.get("listViewBtnY")) * size.y);
-
+                statusBarImg.setImageBitmap(statusBar); // Status Bar img
+                navBarImg.setImageBitmap(navBar); // Nav Bar img
+                myLocBtn.setImageBitmap(myLoc); // My Location btn
+                mapListViewBtn.setImageBitmap(mapList); // Map/List View btn
             }
         });
     }
@@ -170,21 +236,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            final String markerTitle = marker.getTitle();
-            api.getEventDetail(marker.getTitle(), new JSONCallable() {
-                @Override
-                public void json(JSONObject jsonData) {
-                    // Merge event summary & detail
-                    JSONObject summary = GlobalVariables.eventJson.get(markerTitle);
-                    for (Object summ : summary.keySet()) {
-                        jsonData.put(summ, summary.get(summ));
-                    }
-                    // Present detail view
-                    Intent detailView = new Intent(getApplicationContext(), DetailView.class);
-                    GlobalVariables.tempJson = jsonData;
-                    startActivity(detailView);
-                }
-            });
+            String markerTitle = marker.getTitle();
+            openDetailView(markerTitle);
             return true;
         }
     };
@@ -202,6 +255,24 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         }
     };
+
+    // Open Detail View
+    public void openDetailView(final String eid) {
+        api.getEventDetail(eid, new JSONCallable() {
+            @Override
+            public void json(JSONObject jsonData) {
+                // Merge event summary & detail
+                JSONObject summary = GlobalVariables.eventJson.get(eid);
+                for (Object summ : summary.keySet()) {
+                    jsonData.put(summ, summary.get(summ));
+                }
+                // Present detail view
+                Intent detailView = new Intent(getApplicationContext(), DetailView.class);
+                GlobalVariables.tempJson = jsonData;
+                startActivity(detailView);
+            }
+        });
+    }
 
     // MARK: NuVents Backend Methods
     @Override
@@ -227,11 +298,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 GMapCamera.clusterMarkers(mapView, mapView.getCameraPosition(), markerOptions.getTitle(), size);
             }
         });
-    }
-
-    @Override
-    public void nuventsServerDidReceiveEventDetail(JSONObject event) {
-        //
     }
 
     @Override

@@ -43,14 +43,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.nuvents.com.nuvents_android.MainActivity" />
         </activity>
-        <activity
-            android:name=".ListView"
-            android:label="@string/title_activity_list_view"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="android.nuvents.com.nuvents_android.MainActivity" />
-        </activity>
     </application>
 
 </manifest>

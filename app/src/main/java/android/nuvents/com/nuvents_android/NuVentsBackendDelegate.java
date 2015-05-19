@@ -13,7 +13,6 @@ public interface NuVentsBackendDelegate {
 
     // Client Request
     public void nuventsServerDidReceiveNearbyEvent(JSONObject event);       // Got nearby event
-    public void nuventsServerDidReceiveEventDetail(JSONObject event);       // Got event detail
 
     // Connection Status
     //public void nuventsServerDidGetNewData(String channel, Object data);    // Got new data from any WS event
