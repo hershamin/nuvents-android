@@ -31,6 +31,7 @@ public class GlobalVariables extends Application {
     public static GoogleMap mapView;
     public static CameraPosition prevCam;
     public static boolean cameraProc = false; // true if camera process is busy
+    public static boolean searchProc = false; // true if search process is busy
     public static JSONObject tempJson; // Temp event json to pass to detail view
 
     private static GlobalVariables singleton;

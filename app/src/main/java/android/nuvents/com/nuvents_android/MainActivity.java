@@ -1,5 +1,6 @@
 package android.nuvents.com.nuvents_android;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,16 +8,22 @@ import android.graphics.Point;
 import android.location.Location;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import org.json.simple.JSONObject;
 
@@ -39,6 +46,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     ImageView statusBarImg;
     ImageView navBarImg;
     WebView webView;
+    EditText searchField;
+    LinearLayout mainLinLay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +64,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         myLocBtn.setOnClickListener(myLocBtnPressed);
         webView.setWebViewClient(new UIWebView());
         webView.getSettings().setJavaScriptEnabled(true);
+        searchField = (EditText) findViewById(R.id.searchField);
+        mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
+        mainLinLay.setOnTouchListener(screenTouchListener);
 
         // MapView
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
@@ -65,6 +77,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         webView.setVisibility(View.INVISIBLE);
         myLocBtn.setVisibility(View.VISIBLE);
 
+        // Init search field
+        searchField.addTextChangedListener(searchFieldWatcher);
+
         // Init NuVents backend API
         try {
             String filesDir = getApplicationContext().getFilesDir().getPath();
@@ -74,6 +89,39 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
 
     }
+
+    // Dismiss text field on clicks anywhere other than keyboard
+    View.OnTouchListener screenTouchListener = new View.OnTouchListener(){
+        @Override
+        public boolean onTouch(View view, MotionEvent ev) {
+            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            return false;
+        }
+    };
+
+    // Search field changed value
+    TextWatcher searchFieldWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            //
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            boolean searchProcess = GlobalVariables.searchProc;
+            if (!searchProcess) { // Search process free
+                searchProcess = true;
+                GMapCamera.searchEventsByTitle(s.toString(), webView);
+                searchProcess = false;
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            //
+        }
+    };
 
     // My location button pressed
     ImageButton.OnClickListener myLocBtnPressed = new ImageButton.OnClickListener() {

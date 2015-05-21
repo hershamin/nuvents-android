@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainLinLay"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
     android:orientation="vertical">
@@ -26,11 +27,20 @@
                 android:id="@+id/mapListViewBtn"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="2dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="77dp"
-                android:layout_height="30dp"
+                android:layout_height="40dp"
                 android:scaleType="fitXY"
                 android:background="@null" />
+            <EditText
+                android:id="@+id/searchField"
+                android:hint="Search"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="95dp"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="10dp" />
         </RelativeLayout>
     </LinearLayout>
     <RelativeLayout

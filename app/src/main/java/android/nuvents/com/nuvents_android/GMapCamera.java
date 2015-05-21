@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
+import android.util.Log;
+import android.webkit.WebView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
@@ -39,6 +41,11 @@ public class GMapCamera {
         if (zoomDiff > GlobalVariables.zoomLevelMargin) {
             clusterMarkers(mapView, position, null, size);
         }
+    }
+
+    // Search events
+    public static void searchEventsByTitle(String searchTerm, WebView webView) {
+        Log.i("SEARCH", "SEARCH: " + searchTerm);
     }
 
     // Cluster markers
