@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
-import android.util.Log;
 import android.webkit.WebView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -14,7 +13,10 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -45,7 +47,23 @@ public class GMapCamera {
 
     // Search events
     public static void searchEventsByTitle(String searchTerm, WebView webView) {
-        Log.i("SEARCH", "SEARCH: " + searchTerm);
+        GoogleMap mapView = GlobalVariables.mapView;
+        Map<String, JSONObject> events = GlobalVariables.eventJson;
+        ArrayList<Marker> markers = GlobalVariables.eventMarkers;
+        String searchText = searchTerm.toLowerCase();
+
+        // Call javascript function (webView)
+        webView.loadUrl("javascript:searchByTitle('" + searchText + "')");
+        // Iterate and filter (mapView)
+        for (Marker marker : markers) {
+            JSONObject event = events.get(marker.getTitle());
+            String title = event.get("title").toString().toLowerCase();
+            if (title.contains(searchText)) { // Search term found in event title
+                marker.setVisible(true);
+            } else {
+                marker.setVisible(false);
+            }
+        }
     }
 
     // Cluster markers
