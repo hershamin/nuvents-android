@@ -331,10 +331,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         // Build marker
         Double latitude = Double.parseDouble(event.get("latitude").toString());
         Double longitude = Double.parseDouble(event.get("longitude").toString());
-        String mapSnippet = (String)event.get("title");
+        String mapSnippet = (String)event.get("marker");
         Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath(mapSnippet, "marker"));
         final MarkerOptions markerOptions = new MarkerOptions().title((String)event.get("eid"))
-                .snippet((String)event.get("title"))
+                .snippet(mapSnippet)
                 .position(new LatLng(latitude, longitude))
                 .icon(BitmapDescriptorFactory.fromBitmap(markerIcon));
         // Add to map & global variable
