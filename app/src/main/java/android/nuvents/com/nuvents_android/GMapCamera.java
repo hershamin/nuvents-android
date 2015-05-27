@@ -119,19 +119,19 @@ public class GMapCamera {
                             if (k != randomIndex && specialEID == null) {
                                 Marker marker = markers.get(tempIndices.get(k));
                                 Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
-                                        .getResourcePath("cluster", "marker"));
+                                        .getResourcePath("cluster", "marker", false));
                                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
                             } else if (specialEID != null && markers.get(tempIndices.get(k)).getTitle() == specialEID) {
                                 // marker to keep bigger
                                 Marker marker = markers.get(tempIndices.get(k));
                                 Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
-                                        .getResourcePath(marker.getSnippet(), "marker"));
+                                        .getResourcePath(marker.getSnippet(), "marker", false));
                                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
                             } else {
                                 // marker to keep bigger
                                 Marker marker = markers.get(tempIndices.get(k));
                                 Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
-                                        .getResourcePath(marker.getSnippet(), "marker"));
+                                        .getResourcePath(marker.getSnippet(), "marker", false));
                                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
                             }
                         }
@@ -145,7 +145,7 @@ public class GMapCamera {
             //  Return all markers to original specs
             for (Marker marker : markers) {
                 Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
-                        .getResourcePath(marker.getSnippet(), "marker"));
+                        .getResourcePath(marker.getSnippet(), "marker", false));
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
             }
         }

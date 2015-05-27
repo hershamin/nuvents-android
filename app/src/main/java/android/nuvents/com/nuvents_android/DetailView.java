@@ -29,7 +29,7 @@ public class DetailView extends ActionBarActivity {
         json = GlobalVariables.tempJson;
 
         // Write event json to file /data
-        String fileS = NuVentsBackend.getResourcePath("tmp", "tmp").replace("tmp/tmp", "") + "data";
+        String fileS = NuVentsBackend.getResourcePath("tmp", "tmp", false).replace("tmp/tmp", "") + "data";
         File file = new File(fileS);
         try {
             if (!file.exists()) file.createNewFile();
@@ -45,9 +45,9 @@ public class DetailView extends ActionBarActivity {
         WebView webView = new WebView(getApplicationContext());
         webView.setWebViewClient(new UIWebView());
         webView.getSettings().setJavaScriptEnabled(true);
-        String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp");
+        String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp", false);
         baseURL = baseURL.replace("tmp/tmp", "");
-        String fileURL = NuVentsBackend.getResourcePath("detailView", "html");
+        String fileURL = NuVentsBackend.getResourcePath("detailView", "html", false);
         String htmlStr = getStringFromFile(fileURL);
         webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);
         setContentView(webView);

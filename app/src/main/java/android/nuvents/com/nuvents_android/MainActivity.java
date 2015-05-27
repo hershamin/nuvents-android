@@ -141,13 +141,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             // UI Setup
             webView.setVisibility(View.VISIBLE);
             myLocBtn.setVisibility(View.INVISIBLE);
-            Bitmap mapListImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("mapView", "icon"));
+            Bitmap mapListImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("mapView", "icon", false));
             mapListViewBtn.setImageBitmap(mapListImg);
             mapListViewBtn.setOnClickListener(null);
             mapListViewBtn.setOnClickListener(mapViewBtnPressed);
 
             // write events json to file /data
-            String fileS = NuVentsBackend.getResourcePath("tmp", "tmp").replace("tmp/tmp", "") + "data";
+            String fileS = NuVentsBackend.getResourcePath("tmp", "tmp", false).replace("tmp/tmp", "") + "data";
             File file = new File(fileS);
             try {
                 if (!file.exists()) file.createNewFile();
@@ -159,9 +159,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 e.printStackTrace();
             }
 
-            String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp");
+            String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp", false);
             baseURL = baseURL.replace("tmp/tmp", "");
-            String fileURL = NuVentsBackend.getResourcePath("listView", "html");
+            String fileURL = NuVentsBackend.getResourcePath("listView", "html", false);
             StringBuilder htmlStr = new StringBuilder();
             try {
                 BufferedReader br = new BufferedReader(new FileReader(new File(fileURL)));
@@ -184,7 +184,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             // UI Setup
             webView.setVisibility(View.INVISIBLE);
             myLocBtn.setVisibility(View.VISIBLE);
-            Bitmap mapListImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
+            Bitmap mapListImg = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon", false));
             mapListViewBtn.setImageBitmap(mapListImg);
             mapListViewBtn.setOnClickListener(null);
             mapListViewBtn.setOnClickListener(listViewBtnPressed);
@@ -247,10 +247,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public void nuventsServerDidSyncResources() {
 
         // Icons
-        final Bitmap myLoc = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon"));
-        final Bitmap mapList = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon"));
-        final Bitmap statusBar = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("statusBar", "icon"));
-        final Bitmap navBar = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("navBar", "icon"));
+        final Bitmap myLoc = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("myLocation", "icon", false));
+        final Bitmap mapList = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("listView", "icon", false));
+        final Bitmap statusBar = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("statusBar", "icon", false));
+        final Bitmap navBar = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath("navBar", "icon", false));
 
         // Add views to hierarchy
         runOnUiThread(new Runnable() {
@@ -332,7 +332,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         Double latitude = Double.parseDouble(event.get("latitude").toString());
         Double longitude = Double.parseDouble(event.get("longitude").toString());
         String mapSnippet = (String)event.get("marker");
-        Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath(mapSnippet, "marker"));
+        Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath(mapSnippet, "marker", false));
         final MarkerOptions markerOptions = new MarkerOptions().title((String)event.get("eid"))
                 .snippet(mapSnippet)
                 .position(new LatLng(latitude, longitude))

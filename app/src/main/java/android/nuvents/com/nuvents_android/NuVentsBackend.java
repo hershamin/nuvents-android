@@ -56,7 +56,7 @@ public class NuVentsBackend {
             JSONObject resources = (JSONObject)types.get(type);
             for (Object resource : resources.keySet()) { // Resources
 
-                String path = getResourcePath((String)resource, (String)type);
+                String path = getResourcePath((String)resource, (String)type, true);
                 File pathFile = new File(path);
                 if (!pathFile.exists()) { // File does not exist
                     downloadFile(path, (String)resources.get(resource)); // Download from provided url
@@ -165,7 +165,7 @@ public class NuVentsBackend {
     }
 
     // Get resource from internal file system
-    public static String getResourcePath(String resource, String type) {
+    public static String getResourcePath(String resource, String type, Boolean override) {
         // Create directories if not present
         String mainDirS = filesDir + "/resources/" + type;
         File mainDir = new File(mainDirS);
@@ -176,9 +176,9 @@ public class NuVentsBackend {
         String filePath = mainDirS + "/" + resource;
         // Check if marker icon exists if not send a default one
         File filepathF = new File(filePath);
-        if (!filepathF.exists() && type.equals("marker")) {
+        if (!filepathF.exists() && type.equals("marker") && !override) {
             filePath = mainDirS + "/default";
-        }
+        } // Only triggered if override is set to true
         return filePath;
     }
 
