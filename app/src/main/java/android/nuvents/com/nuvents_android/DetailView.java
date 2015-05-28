@@ -10,10 +10,8 @@ import android.webkit.WebViewClient;
 import org.json.simple.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 
 
 public class DetailView extends ActionBarActivity {
@@ -28,28 +26,20 @@ public class DetailView extends ActionBarActivity {
         // Collect vars
         json = GlobalVariables.tempJson;
 
-        // Write event json to file /data
-        String fileS = NuVentsBackend.getResourcePath("tmp", "tmp", false).replace("tmp/tmp", "") + "data";
-        File file = new File(fileS);
-        try {
-            if (!file.exists()) file.createNewFile();
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(json.toString());
-            bw.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         // Load webview
         WebView webView = new WebView(getApplicationContext());
-        webView.setWebViewClient(new UIWebView());
+        webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
-        String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp", false);
+        webView.getSettings().setAllowFileAccessFromFileURLs(true);
+        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.setWebViewClient(new UIWebView());
+        /*String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp", false);
         baseURL = baseURL.replace("tmp/tmp", "");
         String fileURL = NuVentsBackend.getResourcePath("detailView", "html", false);
         String htmlStr = getStringFromFile(fileURL);
-        webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);
+        webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);*/
+        webView.loadUrl("http://storage.googleapis.com/nuvents-resources/detailViewTest.html");
         setContentView(webView);
     }
 
@@ -96,12 +86,18 @@ public class DetailView extends ActionBarActivity {
     private class UIWebView extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView webView, String url) {
-            if (url.contains("closeDetailView://")) {
+            if (url.contains("closedetailview://")) {
                 finish();
                 return true;
             } else {
                 return false;
             }
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            view.loadUrl("javascript:setEvent(" + json.toString() + ")");
+            super.onPageFinished(view, url);
         }
     }
 
