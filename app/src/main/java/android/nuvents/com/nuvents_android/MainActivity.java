@@ -62,8 +62,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         navBarImg = (ImageView) findViewById(R.id.navBarImg);
         webView = (WebView) findViewById(R.id.webView);
         myLocBtn.setOnClickListener(myLocBtnPressed);
-        webView.setWebViewClient(new UIWebView());
+        webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAllowFileAccessFromFileURLs(true);
+        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.setWebViewClient(new UIWebView());
         searchField = (EditText) findViewById(R.id.searchField);
         mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
         mainLinLay.setOnTouchListener(screenTouchListener);
@@ -146,20 +150,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             mapListViewBtn.setOnClickListener(null);
             mapListViewBtn.setOnClickListener(mapViewBtnPressed);
 
-            // write events json to file /data
-            String fileS = NuVentsBackend.getResourcePath("tmp", "tmp", false).replace("tmp/tmp", "") + "data";
-            File file = new File(fileS);
-            try {
-                if (!file.exists()) file.createNewFile();
-                FileWriter fw = new FileWriter(file.getAbsoluteFile());
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(GlobalVariables.eventJson.toString().replaceAll("=",":"));
-                bw.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp", false);
+            // Load webview
+            /*String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp", false);
             baseURL = baseURL.replace("tmp/tmp", "");
             String fileURL = NuVentsBackend.getResourcePath("listView", "html", false);
             StringBuilder htmlStr = new StringBuilder();
@@ -173,7 +165,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            webView.loadDataWithBaseURL("file://" + baseURL, htmlStr.toString(), "text/html", null, null);
+            webView.loadDataWithBaseURL("file://" + baseURL, htmlStr.toString(), "text/html", null, null);*/
+            webView.loadUrl("http://storage.googleapis.com/nuvents-resources/listViewTest.html");
         }
     };
 
@@ -195,13 +188,20 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private class UIWebView extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView webView, String url) {
-            if (url.contains("openDetailView://")) {
+            if (url.contains("opendetailview://")) {
                 String eid = url.split("//")[1];
                 openDetailView(eid);
                 return true;
             } else {
                 return false;
             }
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            String eventsJson = GlobalVariables.eventJson.toString().replaceAll("=",":");
+            view.loadUrl("javascript:setEvents(" + eventsJson + ")");
+            super.onPageFinished(view, url);
         }
     }
 
