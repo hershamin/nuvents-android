@@ -27,11 +27,6 @@ import android.widget.LinearLayout;
 
 import org.json.simple.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.net.URISyntaxException;
 
 
@@ -166,7 +161,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 e.printStackTrace();
             }
             webView.loadDataWithBaseURL("file://" + baseURL, htmlStr.toString(), "text/html", null, null);*/
-            webView.loadUrl("http://storage.googleapis.com/nuvents-resources/listViewTest.html");
+            if (webView.getTitle().isEmpty()) {
+                webView.loadUrl("http://storage.googleapis.com/nuvents-resources/listViewTest.html");
+            } else {
+                String eventsJson = GlobalVariables.eventJson.toString().replaceAll("=",":");
+                webView.loadUrl("javascript:setEvents(" + eventsJson + ")");
+            }
         }
     };
 
