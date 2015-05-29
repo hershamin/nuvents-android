@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import org.json.simple.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.Map;
 
 
 public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, NuVentsBackendDelegate {
@@ -164,8 +165,16 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             if (webView.getTitle().isEmpty()) {
                 webView.loadUrl("http://storage.googleapis.com/nuvents-resources/listViewTest.html");
             } else {
-                String eventsJson = GlobalVariables.eventJson.toString().replaceAll("=",":");
+                // Convert hashmap to json
+                Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
+                JSONObject eventsJson = new JSONObject();
+                for (String key : eventMap.keySet()) {
+                    eventsJson.put(key, eventMap.get(key));
+                }
+                // Send events to listview
                 webView.loadUrl("javascript:setEvents(" + eventsJson + ")");
+                String searchText = searchField.getText().toString();
+                webView.loadUrl("javascript:searchByTitle('" + searchText + "')");
             }
         }
     };
@@ -199,8 +208,16 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            String eventsJson = GlobalVariables.eventJson.toString().replaceAll("=",":");
+            // Convert hashmap to json
+            Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
+            JSONObject eventsJson = new JSONObject();
+            for (String key : eventMap.keySet()) {
+                eventsJson.put(key, eventMap.get(key));
+            }
+            // Send events to listview
             view.loadUrl("javascript:setEvents(" + eventsJson + ")");
+            String searchText = searchField.getText().toString();
+            webView.loadUrl("javascript:searchByTitle('" + searchText + "')");
             super.onPageFinished(view, url);
         }
     }
