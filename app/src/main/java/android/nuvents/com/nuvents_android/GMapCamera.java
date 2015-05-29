@@ -120,18 +120,21 @@ public class GMapCamera {
                                 Marker marker = markers.get(tempIndices.get(k));
                                 Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
                                         .getResourcePath("cluster", "marker", false));
+                                markerIcon = NuVentsBackend.resizeImage(markerIcon, 12);
                                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
                             } else if (specialEID != null && markers.get(tempIndices.get(k)).getTitle() == specialEID) {
                                 // marker to keep bigger
                                 Marker marker = markers.get(tempIndices.get(k));
                                 Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
                                         .getResourcePath(marker.getSnippet(), "marker", false));
+                                markerIcon = NuVentsBackend.resizeImage(markerIcon, 85);
                                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
                             } else {
                                 // marker to keep bigger
                                 Marker marker = markers.get(tempIndices.get(k));
                                 Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
                                         .getResourcePath(marker.getSnippet(), "marker", false));
+                                markerIcon = NuVentsBackend.resizeImage(markerIcon, 85);
                                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
                             }
                         }
@@ -146,6 +149,7 @@ public class GMapCamera {
             for (Marker marker : markers) {
                 Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
                         .getResourcePath(marker.getSnippet(), "marker", false));
+                markerIcon = NuVentsBackend.resizeImage(markerIcon, 85);
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
             }
         }

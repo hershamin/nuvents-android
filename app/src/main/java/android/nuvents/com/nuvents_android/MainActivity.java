@@ -350,6 +350,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         Double longitude = Double.parseDouble(event.get("longitude").toString());
         String mapSnippet = (String)event.get("marker");
         Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend.getResourcePath(mapSnippet, "marker", false));
+        markerIcon = NuVentsBackend.resizeImage(markerIcon, 85);
         final MarkerOptions markerOptions = new MarkerOptions().title((String)event.get("eid"))
                 .snippet(mapSnippet)
                 .position(new LatLng(latitude, longitude))

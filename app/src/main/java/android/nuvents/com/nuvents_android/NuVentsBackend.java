@@ -4,9 +4,9 @@ package android.nuvents.com.nuvents_android;
  * Created by hersh on 4/28/15.
  */
 
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Ack;
@@ -27,7 +27,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
-import java.util.concurrent.Callable;
 
 public class NuVentsBackend {
 
@@ -162,6 +161,19 @@ public class NuVentsBackend {
             phrase += c;
         }
         return phrase;
+    }
+
+    // Resize image based on width
+    public static Bitmap resizeImage(Bitmap origImage, float width) {
+
+        // Resize image to required width
+        int oldWidth = origImage.getWidth();
+        float scaleFactor = width / oldWidth;
+        int newHeight = (int)(origImage.getHeight() * scaleFactor);
+        int newWidth = (int)(oldWidth * scaleFactor);
+        Bitmap newImage = Bitmap.createScaledBitmap(origImage, newWidth, newHeight, true);
+
+        return newImage;
     }
 
     // Get resource from internal file system
