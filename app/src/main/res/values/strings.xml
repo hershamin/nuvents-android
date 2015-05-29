@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Nuvents-android</string>
+    <string name="app_name">NuVents</string>
     <string name="gmaps_key">AIzaSyB_fzlR-nINhTZR0M_tXuCLW25uO9hzxug</string>
 
     <string name="hello_world">Hello world!</string>
