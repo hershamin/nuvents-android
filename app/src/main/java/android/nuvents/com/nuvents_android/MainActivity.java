@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import io.fabric.sdk.android.Fabric;
 import org.json.simple.JSONObject;
 
 import java.net.URISyntaxException;
@@ -48,6 +50,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         // Init vars

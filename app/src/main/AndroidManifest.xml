@@ -45,6 +45,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.nuvents.com.nuvents_android.MainActivity" />
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="f8b574d5e29a6fdfd495347c75350a31d19e1a84" />
     </application>
 
 </manifest>
