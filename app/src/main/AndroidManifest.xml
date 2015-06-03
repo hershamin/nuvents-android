@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".WelcomeActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -39,15 +39,49 @@
         <activity
             android:name=".DetailView"
             android:label="@string/title_activity_detail_view"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".WelcomeActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="android.nuvents.com.nuvents_android.MainActivity" />
+                android:value=".WelcomeActivity" />
         </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="f8b574d5e29a6fdfd495347c75350a31d19e1a84" />
+
+        <activity
+            android:name=".PickerActivity"
+            android:label="@string/title_activity_picker"
+            android:parentActivityName=".WelcomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.nuvents.com.nuvents_android.WelcomeActivity" />
+        </activity>
+        <activity
+            android:name=".MapActivity"
+            android:label="@string/title_activity_map"
+            android:parentActivityName=".PickerActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.nuvents.com.nuvents_android.PickerActivity" />
+        </activity>
+        <activity
+            android:name=".ListActivity"
+            android:label="@string/title_activity_list"
+            android:parentActivityName=".PickerActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.nuvents.com.nuvents_android.PickerActivity" />
+        </activity>
+        <activity
+            android:name=".CategoryActivity"
+            android:label="@string/title_activity_category"
+            android:parentActivityName=".PickerActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.nuvents.com.nuvents_android.PickerActivity" />
+        </activity>
     </application>
 
 </manifest>

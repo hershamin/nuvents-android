@@ -33,7 +33,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, NuVentsBackendDelegate {
+public class WelcomeActivity extends ActionBarActivity implements OnMapReadyCallback, NuVentsBackendDelegate {
 
     public NuVentsBackend api;
     public boolean serverConn = false;
@@ -51,7 +51,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_welcome);
 
         // Init vars
         getWindowManager().getDefaultDisplay().getSize(size); // Get window size
