@@ -1,11 +1,17 @@
 package android.nuvents.com.nuvents_android;
 
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.maps.model.LatLng;
+
 import android.util.Log;
 
 import io.fabric.sdk.android.Fabric;
@@ -17,7 +23,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
 
     public NuVentsBackend api;
     public boolean serverConn = false;
-    public boolean initialLoc = false;
+    public LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +34,34 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         // Init NuVents backend API
         try {
             String filesDir = getApplicationContext().getFilesDir().getPath();
-            api = new NuVentsBackend(this, GlobalVariables.server, "test", filesDir);
+            String deviceID = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+            api = new NuVentsBackend(this, GlobalVariables.server, deviceID, filesDir);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
+        // Location manager
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new MyLocationChanged());
+
+    }
+
+    // got Device location
+    class MyLocationChanged implements LocationListener {
+        @Override
+        public void onLocationChanged(Location location) {
+            if (serverConn) { // Only use when connected to server
+                LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+                api.getNearbyEvents(loc, 100);
+                locationManager.removeUpdates(this);
+            }
+        }
+        @Override
+        public void onProviderDisabled(String provider) {}
+        @Override
+        public void onProviderEnabled(String provider) {}
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
     }
 
     @Override
@@ -63,8 +92,8 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         //
     }
 
-    // Open Detail View
-    public void openDetailView(final String eid) {
+    // Get event detail
+    public void getEventDetail(final String eid, final JSONCallable callback) {
         api.getEventDetail(eid, new JSONCallable() {
             @Override
             public void json(JSONObject jsonData) {
@@ -73,10 +102,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
                 for (Object summ : summary.keySet()) {
                     jsonData.put(summ, summary.get(summ));
                 }
-                // Present detail view
-                Intent detailView = new Intent(getApplicationContext(), DetailView.class);
-                GlobalVariables.tempJson = jsonData;
-                startActivity(detailView);
+                callback.json(jsonData);
             }
         });
     }
@@ -85,7 +111,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     @Override
     public void nuventsServerDidReceiveNearbyEvent(JSONObject event) {
         // Add to global vars
-        GlobalVariables.eventJson.put((String)event.get("eid"), event);
+        GlobalVariables.eventJson.put((String) event.get("eid"), event);
     }
 
     @Override
