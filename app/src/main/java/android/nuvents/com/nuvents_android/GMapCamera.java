@@ -46,14 +46,12 @@ public class GMapCamera {
     }
 
     // Search events
-    public static void searchEventsByTitle(String searchTerm, WebView webView) {
+    public static void searchEventsByTitle(String searchTerm) {
         GoogleMap mapView = GlobalVariables.mapView;
         Map<String, JSONObject> events = GlobalVariables.eventJson;
         ArrayList<Marker> markers = GlobalVariables.eventMarkers;
         String searchText = searchTerm.toLowerCase();
 
-        // Call javascript function (webView)
-        webView.loadUrl("javascript:searchByTitle('" + searchText + "')");
         // Iterate and filter (mapView)
         for (Marker marker : markers) {
             JSONObject event = events.get(marker.getTitle());

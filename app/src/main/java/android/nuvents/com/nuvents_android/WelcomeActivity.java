@@ -33,19 +33,16 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 
-public class WelcomeActivity extends ActionBarActivity implements OnMapReadyCallback, NuVentsBackendDelegate {
+public class WelcomeActivity extends ActionBarActivity implements NuVentsBackendDelegate {
 
     public NuVentsBackend api;
     public boolean serverConn = false;
     public boolean initialLoc = false;
     Point size = new Point();
-    ImageButton myLocBtn;
     ImageButton mapListViewBtn;
     ImageView statusBarImg;
     ImageView navBarImg;
     WebView webView;
-    EditText searchField;
-    LinearLayout mainLinLay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,21 +52,16 @@ public class WelcomeActivity extends ActionBarActivity implements OnMapReadyCall
 
         // Init vars
         getWindowManager().getDefaultDisplay().getSize(size); // Get window size
-        myLocBtn = (ImageButton) findViewById(R.id.myLocBtn);
         mapListViewBtn = (ImageButton) findViewById(R.id.mapListViewBtn);
         statusBarImg = (ImageView) findViewById(R.id.statusBarImg);
         navBarImg = (ImageView) findViewById(R.id.navBarImg);
         webView = (WebView) findViewById(R.id.webView);
-        myLocBtn.setOnClickListener(myLocBtnPressed);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAllowFileAccessFromFileURLs(true);
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
-        searchField = (EditText) findViewById(R.id.searchField);
-        mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
-        mainLinLay.setOnTouchListener(screenTouchListener);
 
         // MapView
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
@@ -78,10 +70,6 @@ public class WelcomeActivity extends ActionBarActivity implements OnMapReadyCall
         // Init mapview/listview btn
         mapListViewBtn.setOnClickListener(listViewBtnPressed);
         webView.setVisibility(View.INVISIBLE);
-        myLocBtn.setVisibility(View.VISIBLE);
-
-        // Init search field
-        searchField.addTextChangedListener(searchFieldWatcher);
 
         // Init NuVents backend API
         try {
@@ -92,50 +80,6 @@ public class WelcomeActivity extends ActionBarActivity implements OnMapReadyCall
         }
 
     }
-
-    // Dismiss text field on clicks anywhere other than keyboard
-    View.OnTouchListener screenTouchListener = new View.OnTouchListener(){
-        @Override
-        public boolean onTouch(View view, MotionEvent ev) {
-            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            return false;
-        }
-    };
-
-    // Search field changed value
-    TextWatcher searchFieldWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            //
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            boolean searchProcess = GlobalVariables.searchProc;
-            if (!searchProcess) { // Search process free
-                searchProcess = true;
-                GMapCamera.searchEventsByTitle(s.toString(), webView);
-                searchProcess = false;
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            //
-        }
-    };
-
-    // My location button pressed
-    ImageButton.OnClickListener myLocBtnPressed = new ImageButton.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            GoogleMap mapView = GlobalVariables.mapView;
-            Location loc = mapView.getMyLocation();
-            mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(),
-                    loc.getLongitude()), 15));
-        }
-    };
 
     // List view button pressed
     ImageButton.OnClickListener listViewBtnPressed = new ImageButton.OnClickListener() {
@@ -226,21 +170,6 @@ public class WelcomeActivity extends ActionBarActivity implements OnMapReadyCall
     }
 
     @Override
-    public void onMapReady(GoogleMap map) {
-        LatLng austin = new LatLng(30.2766, -97.734);
-
-        map.setMyLocationEnabled(true);
-        map.getUiSettings().setMyLocationButtonEnabled(false);
-        map.getUiSettings().setRotateGesturesEnabled(false);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(austin, 9));
-
-        map.setOnMyLocationChangeListener(locationChangeListener);
-        map.setOnMarkerClickListener(markerClickListener);
-        map.setOnCameraChangeListener(cameraChangeListener);
-        GlobalVariables.mapView = map;
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -297,30 +226,6 @@ public class WelcomeActivity extends ActionBarActivity implements OnMapReadyCall
                 float dist = (float)GMapCamera.distanceBetween(loc, topLeftCorner);
                 api.getNearbyEvents(loc, dist);
                 initialLoc = true;
-            }
-        }
-    };
-
-    // Google Maps Marker Click Listener
-    GoogleMap.OnMarkerClickListener markerClickListener = new GoogleMap.OnMarkerClickListener() {
-        @Override
-        public boolean onMarkerClick(Marker marker) {
-            String markerTitle = marker.getTitle();
-            openDetailView(markerTitle);
-            return true;
-        }
-    };
-
-    // Google Maps Camera Change Listener
-    GoogleMap.OnCameraChangeListener cameraChangeListener = new GoogleMap.OnCameraChangeListener() {
-        @Override
-        public void onCameraChange(CameraPosition cameraPosition) {
-            boolean cameraProcess = GlobalVariables.cameraProc;
-            if (!cameraProcess) { // Camera process free
-                cameraProcess = true;
-                GMapCamera.cameraChanged(cameraPosition, size); // Call clustering function
-                GlobalVariables.prevCam = cameraPosition; // Make current position previous position
-                cameraProcess = false;
             }
         }
     };
