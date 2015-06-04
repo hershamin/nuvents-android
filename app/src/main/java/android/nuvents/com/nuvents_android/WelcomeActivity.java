@@ -1,5 +1,6 @@
 package android.nuvents.com.nuvents_android;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,6 +14,8 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 
 import io.fabric.sdk.android.Fabric;
 import org.json.simple.JSONObject;
@@ -24,6 +27,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     public NuVentsBackend api;
     public boolean serverConn = false;
     public LocationManager locationManager;
+    public ImageButton pickerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,12 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         }
 
         // Location manager
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new MyLocationChanged());
+
+        // Picker view button
+        pickerButton = (ImageButton) findViewById(R.id.pickerButton);
+        pickerButton.setOnClickListener(pickerButtonPressed);
 
     }
 
@@ -63,6 +72,15 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {}
     }
+
+    // My location button pressed
+    ImageButton.OnClickListener pickerButtonPressed = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent pickerIntent = new Intent(getApplicationContext(), PickerActivity.class);
+            startActivity(pickerIntent);
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,17 +1,68 @@
 package android.nuvents.com.nuvents_android;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+import org.json.simple.JSONObject;
+
+import java.util.Map;
 
 
 public class PickerActivity extends ActionBarActivity {
+
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picker);
+
+        // Init vars
+        webView = (WebView) findViewById(R.id.webView);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAllowFileAccessFromFileURLs(true);
+        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.setWebViewClient(new UIWebView());
+        webView.loadUrl("http://storage.googleapis.com/nuvents-resources/pickerView.html");
+
+    }
+
+    // Webview delegate methods
+    private class UIWebView extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView webView, String url) {
+            if (url.contains("openmapview://")) {
+                Intent mapView = new Intent(getApplicationContext(), MapActivity.class);
+                startActivity(mapView);
+                return true;
+            } else if (url.contains("openlistview://")) {
+                Intent listView = new Intent(getApplicationContext(), ListActivity.class);
+                startActivity(listView);
+                return true;
+            } else if (url.contains("opencategoryview://")) {
+                Intent categoryView = new Intent(getApplicationContext(), CategoryActivity.class);
+                startActivity(categoryView);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            // Convert hashmap to json
+            Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
+            // Send to webview
+            view.loadUrl("javascript:setEventCount(" + eventMap.keySet().size() + ")");
+            super.onPageFinished(view, url);
+        }
     }
 
     @Override
