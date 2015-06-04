@@ -30,7 +30,7 @@ public class PickerActivity extends ActionBarActivity {
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
-        webView.loadUrl("http://storage.googleapis.com/nuvents-resources/pickerView.html");
+        webView.loadUrl(GlobalVariables.pickerView);
 
     }
 

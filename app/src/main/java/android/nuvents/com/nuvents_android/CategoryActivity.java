@@ -26,7 +26,7 @@ public class CategoryActivity extends ActionBarActivity {
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
-        webView.loadUrl("http://storage.googleapis.com/nuvents-resources/categoryView.html");
+        webView.loadUrl(GlobalVariables.categoryView);
 
     }
 
