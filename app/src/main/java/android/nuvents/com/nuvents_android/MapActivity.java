@@ -111,10 +111,17 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
 
         // Add markers to mapview
         Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
-        JSONObject eventsJson = new JSONObject();
         GlobalVariables.eventMarkers.clear(); // Clear markers global var
         for (String key : eventMap.keySet()) {
             JSONObject event = eventMap.get(key);
+            // check if in requested category
+            String category = event.get("marker").toString().toLowerCase();
+            String reqCat = GlobalVariables.category;
+            if (reqCat != "") {
+                if (!category.contains(reqCat)) {
+                    continue; // Not in requested category, continue
+                }
+            }
             // Build marker
             Double latitude = Double.parseDouble(event.get("latitude").toString());
             Double longitude = Double.parseDouble(event.get("longitude").toString());

@@ -107,6 +107,14 @@ public class ListActivity extends ActionBarActivity {
             Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
             JSONObject eventsJson = new JSONObject();
             for (String key : eventMap.keySet()) {
+                JSONObject event = eventMap.get(key);
+                String category = event.get("marker").toString().toLowerCase();
+                String reqCat = GlobalVariables.category;
+                if (reqCat != "") {
+                    if (!category.contains(reqCat)) {
+                        continue; // Not in requested category, continue
+                    }
+                }
                 eventsJson.put(key, eventMap.get(key));
             }
             // Send events to listview
