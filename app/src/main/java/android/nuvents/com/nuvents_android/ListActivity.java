@@ -41,6 +41,7 @@ public class ListActivity extends ActionBarActivity {
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
         webView.loadUrl(GlobalVariables.listView);
+        searchField = (EditText) findViewById(R.id.searchField);
         searchField.addTextChangedListener(searchFieldWatcher);
         mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
         mainLinLay.setOnTouchListener(screenTouchListener);
