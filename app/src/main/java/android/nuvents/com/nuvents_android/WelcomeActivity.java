@@ -47,7 +47,9 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
 
         // Location manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new MyLocationChanged());
+        MyLocationChanged locationChangeListener = new MyLocationChanged();
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationChangeListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationChangeListener);
 
         // Picker view button
         pickerButton = (ImageButton) findViewById(R.id.pickerButton);
