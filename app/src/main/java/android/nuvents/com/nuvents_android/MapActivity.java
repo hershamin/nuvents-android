@@ -98,12 +98,12 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng austin = new LatLng(30.2766, -97.734);
+        LatLng currentLoc = GlobalVariables.currentLoc;
 
         map.setMyLocationEnabled(true);
         map.getUiSettings().setMyLocationButtonEnabled(false);
         map.getUiSettings().setRotateGesturesEnabled(false);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(austin, 9));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 13));
 
         map.setOnMarkerClickListener(markerClickListener);
         map.setOnCameraChangeListener(cameraChangeListener);

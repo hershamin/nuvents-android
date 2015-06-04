@@ -65,6 +65,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
             if (serverConn) { // Only use when connected to server
                 LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                 api.getNearbyEvents(loc, 5000); // Search within 5000 meters
+                GlobalVariables.currentLoc = loc; // Set current location
                 locationManager.removeUpdates(this);
             }
         }

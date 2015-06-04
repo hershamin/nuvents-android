@@ -8,6 +8,7 @@ import android.app.Application;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import org.json.simple.JSONObject;
@@ -37,6 +38,7 @@ public class GlobalVariables extends Application {
     public static boolean cameraProc = false; // true if camera process is busy
     public static boolean searchProc = false; // true if search process is busy
     public static JSONObject tempJson; // Temp event json to pass to detail view
+    public static LatLng currentLoc; // Current location
     public static String category; // To set event category
     public static NuVentsBackend api; // NuVents backend API
 
