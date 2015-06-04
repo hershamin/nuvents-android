@@ -16,31 +16,23 @@ import java.io.FileReader;
 
 public class DetailView extends ActionBarActivity {
 
-    JSONObject json; // Event variable to be passed
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_view);
 
-        // Collect vars
-        json = GlobalVariables.tempJson;
-
         // Load webview
-        WebView webView = new WebView(getApplicationContext());
+        WebView webView = (WebView) findViewById(R.id.webView);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAllowFileAccessFromFileURLs(true);
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
-        /*String baseURL = NuVentsBackend.getResourcePath("tmp", "tmp", false);
-        baseURL = baseURL.replace("tmp/tmp", "");
-        String fileURL = NuVentsBackend.getResourcePath("detailView", "html", false);
-        String htmlStr = getStringFromFile(fileURL);
-        webView.loadDataWithBaseURL("file://" + baseURL, htmlStr, "text/html", null, null);*/
-        webView.loadUrl("http://storage.googleapis.com/nuvents-resources/detailViewTest.html");
-        setContentView(webView);
+        webView.loadUrl("http://storage.googleapis.com/nuvents-resources/detailView.html");
+
     }
 
     @Override
@@ -65,23 +57,6 @@ public class DetailView extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // Helper method to get string from file
-    private String getStringFromFile(String filePath) {
-        StringBuilder output = new StringBuilder();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(new File(filePath)));
-            String line;
-            while ((line = br.readLine()) != null) {
-                output.append(line);
-            }
-            br.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return output.toString();
-    }
-
     // Webview delegate methods
     private class UIWebView extends WebViewClient {
         @Override
@@ -96,6 +71,7 @@ public class DetailView extends ActionBarActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            JSONObject json = GlobalVariables.tempJson;
             view.loadUrl("javascript:setEvent(" + json.toString() + ")");
             super.onPageFinished(view, url);
         }
