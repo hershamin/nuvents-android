@@ -33,6 +33,7 @@ public class GlobalVariables extends Application {
     public static boolean cameraProc = false; // true if camera process is busy
     public static boolean searchProc = false; // true if search process is busy
     public static JSONObject tempJson; // Temp event json to pass to detail view
+    public static String category; // To set event category
 
     private static GlobalVariables singleton;
 

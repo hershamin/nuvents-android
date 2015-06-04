@@ -40,10 +40,12 @@ public class PickerActivity extends ActionBarActivity {
         public boolean shouldOverrideUrlLoading(WebView webView, String url) {
             if (url.contains("openmapview://")) {
                 Intent mapView = new Intent(getApplicationContext(), MapActivity.class);
+                GlobalVariables.category = ""; // Set category in global
                 startActivity(mapView);
                 return true;
             } else if (url.contains("openlistview://")) {
                 Intent listView = new Intent(getApplicationContext(), ListActivity.class);
+                GlobalVariables.category = ""; // Set category in global
                 startActivity(listView);
                 return true;
             } else if (url.contains("opencategoryview://")) {

@@ -1,17 +1,62 @@
 package android.nuvents.com.nuvents_android;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 
 public class CategoryActivity extends ActionBarActivity {
+
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+
+        // Init vars
+        webView =(WebView) findViewById(R.id.webView);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAllowFileAccessFromFileURLs(true);
+        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.setWebViewClient(new UIWebView());
+        webView.loadUrl("http://storage.googleapis.com/nuvents-resources/categoryView.html");
+
+    }
+
+    // Webview delegate methods
+    private class UIWebView extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView webView, String url) {
+            if (url.contains("openmapview://")) {
+                Intent mapView = new Intent(getApplicationContext(), MapActivity.class);
+                GlobalVariables.category = url.split("//")[1];
+                startActivity(mapView);
+                return true;
+            } else if (url.contains("openlistview://")) {
+                Intent listView = new Intent(getApplicationContext(), ListActivity.class);
+                GlobalVariables.category = url.split("//")[1];
+                startActivity(listView);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            // Get image url from assets
+            String imgURL = "file:///android_asset/catViewBack.png";
+            // Send to webview
+            view.loadUrl("javascript:setImgUrl(" + imgURL + ")");
+            super.onPageFinished(view, url);
+        }
     }
 
     @Override
