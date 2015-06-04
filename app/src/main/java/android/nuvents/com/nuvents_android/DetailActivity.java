@@ -9,19 +9,15 @@ import android.webkit.WebViewClient;
 
 import org.json.simple.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 
-
-public class DetailView extends ActionBarActivity {
+public class DetailActivity extends ActionBarActivity {
 
     WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_view);
+        setContentView(R.layout.activity_detail);
 
         // Load webview
         WebView webView = (WebView) findViewById(R.id.webView);

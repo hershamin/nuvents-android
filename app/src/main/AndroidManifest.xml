@@ -37,7 +37,7 @@
             android:value="@string/gmaps_key" />
 
         <activity
-            android:name=".DetailView"
+            android:name=".DetailActivity"
             android:label="@string/title_activity_detail_view"
             android:parentActivityName=".WelcomeActivity"
             android:screenOrientation="portrait" >

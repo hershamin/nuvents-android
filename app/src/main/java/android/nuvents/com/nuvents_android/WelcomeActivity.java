@@ -41,6 +41,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
             String deviceID = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                     Settings.Secure.ANDROID_ID);
             api = new NuVentsBackend(this, GlobalVariables.server, deviceID, filesDir);
+            GlobalVariables.api= api;
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -113,8 +114,8 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     }
 
     // Get event detail
-    public void getEventDetail(final String eid, final JSONCallable callback) {
-        api.getEventDetail(eid, new JSONCallable() {
+    public static void getEventDetail(final String eid, final JSONCallable callback) {
+        GlobalVariables.api.getEventDetail(eid, new JSONCallable() {
             @Override
             public void json(JSONObject jsonData) {
                 // Merge event summary & detail

@@ -1,6 +1,7 @@
 package android.nuvents.com.nuvents_android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -153,7 +154,14 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
         @Override
         public boolean onMarkerClick(Marker marker) {
             String markerTitle = marker.getTitle();
-            openDetailView(markerTitle);
+            WelcomeActivity.getEventDetail(markerTitle, new JSONCallable() {
+                @Override
+                public void json(JSONObject jsonData) {
+                    GlobalVariables.tempJson = jsonData;
+                    Intent detailView = new Intent(getApplicationContext(), DetailActivity.class);
+                    startActivity(detailView);
+                }
+            });
             return true;
         }
     };

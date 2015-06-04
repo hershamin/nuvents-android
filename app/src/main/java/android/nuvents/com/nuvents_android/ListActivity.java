@@ -1,6 +1,7 @@
 package android.nuvents.com.nuvents_android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -84,7 +85,14 @@ public class ListActivity extends ActionBarActivity {
         public boolean shouldOverrideUrlLoading(WebView webView, String url) {
             if (url.contains("opendetailview://")) {
                 String eid = url.split("//")[1];
-                openDetailView(eid);
+                WelcomeActivity.getEventDetail(eid, new JSONCallable() {
+                    @Override
+                    public void json(JSONObject jsonData) {
+                        GlobalVariables.tempJson = jsonData;
+                        Intent detailView = new Intent(getApplicationContext(), DetailActivity.class);
+                        startActivity(detailView);
+                    }
+                });
                 return true;
             } else {
                 return false;
