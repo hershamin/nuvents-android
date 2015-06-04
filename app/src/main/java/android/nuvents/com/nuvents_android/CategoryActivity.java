@@ -51,10 +51,7 @@ public class CategoryActivity extends ActionBarActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            // Get image url from assets
-            String imgURL = "file:///android_asset/catViewBack.png";
-            // Send to webview
-            view.loadUrl("javascript:setImgUrl(" + imgURL + ")");
+            //
             super.onPageFinished(view, url);
         }
     }

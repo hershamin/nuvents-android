@@ -63,6 +63,10 @@ public class PickerActivity extends ActionBarActivity {
             Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
             // Send to webview
             view.loadUrl("javascript:setEventCount(" + eventMap.keySet().size() + ")");
+            // Get image url from assets
+            String imgURL = "file:///android_asset/catViewBack.png";
+            // Send to webview
+            view.loadUrl("javascript:setImgUrl(" + imgURL + ")");
             super.onPageFinished(view, url);
         }
     }
