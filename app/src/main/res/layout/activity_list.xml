@@ -23,8 +23,18 @@
             android:layout_marginLeft="22dp"
             android:layout_marginTop="10dp" />
     </RelativeLayout>
-    <WebView
-        android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <ImageButton
+            android:id="@+id/homeBtn"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="200dp" />
+    </RelativeLayout>
 </LinearLayout>

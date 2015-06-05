@@ -25,8 +25,7 @@
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical">
+        android:layout_height="fill_parent">
         <fragment
             android:id="@+id/map"
             android:layout_width="match_parent"
@@ -39,7 +38,12 @@
             android:layout_marginBottom="33dp"
             android:layout_width="66dp"
             android:layout_height="67dp"
-            android:scaleType="fitXY"
-            android:background="@null" />
+            android:scaleType="fitXY" />
+        <ImageButton
+            android:id="@+id/homeBtn"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="200dp" />
     </RelativeLayout>
 </LinearLayout>

@@ -37,6 +37,7 @@ import java.util.Map;
 public class MapActivity extends ActionBarActivity implements OnMapReadyCallback {
 
     ImageButton myLocBtn;
+    ImageButton homeBtn;
     EditText searchField;
     LinearLayout mainLinLay;
     Point size = new Point();
@@ -50,6 +51,8 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
         getWindowManager().getDefaultDisplay().getSize(size); // Get window size
         myLocBtn = (ImageButton) findViewById(R.id.myLocBtn);
         myLocBtn.setOnClickListener(myLocBtnPressed);
+        homeBtn = (ImageButton) findViewById(R.id.homeBtn);
+        homeBtn.setOnClickListener(homeBtnClicked);
         searchField = (EditText) findViewById(R.id.searchField);
         mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
         mainLinLay.setOnTouchListener(screenTouchListener);
@@ -70,6 +73,17 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
             InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             return false;
+        }
+    };
+
+    // NuVents home button clicked, go to picker view
+    ImageButton.OnClickListener homeBtnClicked = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Go to Picker Activity and dismiss anything above it
+            Intent pickerView = new Intent(getApplicationContext(), PickerActivity.class);
+            pickerView.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(pickerView);
         }
     };
 

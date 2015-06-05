@@ -1,17 +1,21 @@
 package android.nuvents.com.nuvents_android;
 
 import android.content.Intent;
+import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 
 
 public class CategoryActivity extends ActionBarActivity {
 
     WebView webView;
+    ImageButton homeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +31,21 @@ public class CategoryActivity extends ActionBarActivity {
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
         webView.loadUrl(GlobalVariables.categoryView);
+        homeBtn = (ImageButton) findViewById(R.id.homeBtn);
+        homeBtn.setOnClickListener(homeBtnClicked);
 
     }
+
+    // NuVents home button clicked, go to picker view
+    ImageButton.OnClickListener homeBtnClicked = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Go to Picker Activity and dismiss anything above it
+            Intent pickerView = new Intent(getApplicationContext(), PickerActivity.class);
+            pickerView.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(pickerView);
+        }
+    };
 
     // Webview delegate methods
     private class UIWebView extends WebViewClient {

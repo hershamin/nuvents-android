@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import org.json.simple.JSONObject;
@@ -26,6 +27,7 @@ public class ListActivity extends ActionBarActivity {
     WebView webView;
     EditText searchField;
     LinearLayout mainLinLay;
+    ImageButton homeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,9 @@ public class ListActivity extends ActionBarActivity {
         searchField.addTextChangedListener(searchFieldWatcher);
         mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
         mainLinLay.setOnTouchListener(screenTouchListener);
+        homeBtn = (ImageButton) findViewById(R.id.homeBtn);
+        homeBtn.setOnClickListener(homeBtnClicked);
+
     }
 
     // Dismiss text field on clicks anywhere other than keyboard
@@ -54,6 +59,17 @@ public class ListActivity extends ActionBarActivity {
             InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             return false;
+        }
+    };
+
+    // NuVents home button clicked, go to picker view
+    ImageButton.OnClickListener homeBtnClicked = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Go to Picker Activity and dismiss anything above it
+            Intent pickerView = new Intent(getApplicationContext(), PickerActivity.class);
+            pickerView.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(pickerView);
         }
     };
 
