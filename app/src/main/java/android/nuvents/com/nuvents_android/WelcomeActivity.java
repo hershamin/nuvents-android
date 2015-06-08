@@ -1,10 +1,7 @@
 package android.nuvents.com.nuvents_android;
 
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -26,7 +23,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
 
     public NuVentsBackend api;
     public boolean serverConn = false;
-    public LocationManager locationManager;
+    public boolean haveLoc = false;
     public ImageButton pickerButton;
 
     @Override
@@ -47,37 +44,40 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         }
 
         // Location manager
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        MyLocationChanged locationChangeListener = new MyLocationChanged();
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationChangeListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationChangeListener);
+        MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
+            @Override
+            public void gotLocation(Location location) {
+                // Look for nearby events if server connection is established
+                GlobalVariables.currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+                if (serverConn) {
+                    requestNearbyEvents();
+                }
+                haveLoc = true;
+            }
+        };
+        MyLocation myLocation = new MyLocation();
+        myLocation.getLocation(this, locationResult);
 
         // Picker view button
         pickerButton = (ImageButton) findViewById(R.id.pickerButton);
         pickerButton.setOnClickListener(pickerButtonPressed);
+        pickerButton.setVisibility(View.INVISIBLE); // hide picker button
 
     }
 
-    // got Device location
-    class MyLocationChanged implements LocationListener {
-        @Override
-        public void onLocationChanged(Location location) {
-            if (serverConn) { // Only use when connected to server
-                LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-                api.getNearbyEvents(loc, 5000); // Search within 5000 meters
-                GlobalVariables.currentLoc = loc; // Set current location
-                locationManager.removeUpdates(this);
+    // Request nearby events
+    void requestNearbyEvents() {
+        LatLng loc = GlobalVariables.currentLoc; // Get current location
+        api.getNearbyEvents(loc, 5000); // Search within 5000 meters
+        runOnUiThread(new Runnable() { // Set picker button visible
+            @Override
+            public void run() {
+                pickerButton.setVisibility(View.VISIBLE);
             }
-        }
-        @Override
-        public void onProviderDisabled(String provider) {}
-        @Override
-        public void onProviderEnabled(String provider) {}
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        });
     }
 
-    // My location button pressed
+    // Picker Activity button pressed
     ImageButton.OnClickListener pickerButtonPressed = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -140,6 +140,10 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     public void nuventsServerDidConnect() {
         Log.i("Server", "NuVents Backend connected");
         api.pingServer();
+        // Look for nearby events if location fix is established
+        if (haveLoc) {
+            requestNearbyEvents();
+        }
         serverConn = true;
     }
 
