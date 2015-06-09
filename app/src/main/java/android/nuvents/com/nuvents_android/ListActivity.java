@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.simple.JSONObject;
 
 import java.util.Map;
@@ -131,7 +133,13 @@ public class ListActivity extends ActionBarActivity {
                         continue; // Not in requested category, continue
                     }
                 }
-                eventsJson.put(key, eventMap.get(key));
+                // Calculate distance between current location and event location
+                LatLng eventLoc = new LatLng(Double.parseDouble(event.get("latitude").toString()),
+                        Double.parseDouble(event.get("longitude").toString()));
+                LatLng currentLoc = GlobalVariables.currentLoc;
+                double dist = GMapCamera.distanceBetween(eventLoc, currentLoc);
+                event.put("distance", dist);
+                eventsJson.put(key, event);
             }
             // Send events to listview
             view.loadUrl("javascript:setEvents(" + eventsJson + ")");
