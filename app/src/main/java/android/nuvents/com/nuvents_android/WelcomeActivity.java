@@ -6,6 +6,7 @@ import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.os.Handler;
 import android.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.LatLng;
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.model.LatLng;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import io.fabric.sdk.android.Fabric;
 import org.json.simple.JSONObject;
@@ -20,6 +22,8 @@ import org.json.simple.JSONObject;
 import java.net.URISyntaxException;
 
 public class WelcomeActivity extends ActionBarActivity implements NuVentsBackendDelegate {
+
+    private static int SPLASH_TIME_OUT = 2500; // Splash screen timeout
 
     public NuVentsBackend api;
     public boolean serverConn = false;
@@ -62,6 +66,24 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         pickerButton = (ImageButton) findViewById(R.id.pickerButton);
         pickerButton.setOnClickListener(pickerButtonPressed);
         pickerButton.setVisibility(View.INVISIBLE); // hide picker button
+
+        // Hide splash screen after delay in specified milli seconds
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                /*
+                *   Showing splash scren (ImageView) with a timer. This is useful
+                *       when showing app logo/company
+                */
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ImageView splashScreen = (ImageView) findViewById(R.id.splashScreen);
+                        splashScreen.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        }, SPLASH_TIME_OUT);
 
     }
 
