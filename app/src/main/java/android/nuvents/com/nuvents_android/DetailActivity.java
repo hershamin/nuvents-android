@@ -1,12 +1,18 @@
 package android.nuvents.com.nuvents_android;
 
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.simple.JSONObject;
 
 
@@ -28,6 +34,10 @@ public class DetailActivity extends ActionBarActivity {
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
         webView.loadUrl(GlobalVariables.detailView);
+
+        // Record hit on event website by issuing a http get request
+        String urlString = GlobalVariables.tempJson.get("website").toString();
+        new IssueHttpGet().execute(urlString); // Call class declared at the bottom of this file
 
     }
 
@@ -70,6 +80,33 @@ public class DetailActivity extends ActionBarActivity {
             JSONObject json = GlobalVariables.tempJson;
             view.loadUrl("javascript:setEvent(" + json.toString() + ")");
             super.onPageFinished(view, url);
+        }
+    }
+
+    // Class to record hit using HTTP get request
+    private class IssueHttpGet extends AsyncTask<String, Integer, Integer> {
+        @Override
+        protected Integer doInBackground(String... params) {
+            int statusCode = 500;
+            try {
+                String urlString = params[0];
+                HttpGet httpReq = new HttpGet(urlString);
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpResponse resp = httpClient.execute(httpReq);
+                statusCode = resp.getStatusLine().getStatusCode();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return statusCode;
+        }
+        @Override
+        protected void onPostExecute(Integer statusCode) {
+            Log.i("WEB", "" + statusCode); // TODO: send status code with link to backend
+            super.onPostExecute(statusCode);
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
         }
     }
 
