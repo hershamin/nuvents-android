@@ -204,6 +204,14 @@ public class NuVentsBackend {
         nSocket.emit("event:nearby", obj);
     }
 
+    // Send event website response code
+    public void sendWebsiteCode(String website, String code) {
+        JSONObject obj = new JSONObject();
+        obj.put("website", website);
+        obj.put("respCode", code);
+        nSocket.emit("event:website", obj);
+    }
+
     // Get event detail
     public void getEventDetail(String eventID, final JSONCallable callback) {
         JSONObject obj = new JSONObject();

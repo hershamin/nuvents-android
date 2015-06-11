@@ -136,6 +136,11 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         //
     }
 
+    // Send event website response code
+    public static void sendWebRespCode(String website, String statusCode){
+        GlobalVariables.api.sendWebsiteCode(website, statusCode);
+    }
+
     // Get event detail
     public static void getEventDetail(final String eid, final JSONCallable callback) {
         GlobalVariables.api.getEventDetail(eid, new JSONCallable() {
