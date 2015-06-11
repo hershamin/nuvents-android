@@ -3,7 +3,6 @@ package android.nuvents.com.nuvents_android;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -84,25 +83,27 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     // Class to record hit using HTTP get request
-    private class IssueHttpGet extends AsyncTask<String, Integer, Integer> {
+    private class IssueHttpGet extends AsyncTask<String, Integer, JSONObject> {
         @Override
-        protected Integer doInBackground(String... params) {
-            int statusCode = 500;
+        protected JSONObject doInBackground(String... params) {
+            JSONObject obj = new JSONObject();
             try {
                 String urlString = params[0];
                 HttpGet httpReq = new HttpGet(urlString);
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpResponse resp = httpClient.execute(httpReq);
-                statusCode = resp.getStatusLine().getStatusCode();
+                int statusCode = resp.getStatusLine().getStatusCode();
+                obj.put("link", urlString);
+                obj.put("code", statusCode);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return statusCode;
+            return obj;
         }
         @Override
-        protected void onPostExecute(Integer statusCode) {
-            Log.i("WEB", "" + statusCode); // TODO: send status code with link to backend
-            super.onPostExecute(statusCode);
+        protected void onPostExecute(JSONObject status) {
+            WelcomeActivity.sendWebRespCode(status.get("link").toString(), status.get("code").toString());
+            super.onPostExecute(status);
         }
         @Override
         protected void onProgressUpdate(Integer... values) {
