@@ -7,17 +7,20 @@
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/ripple_material_dark"
+        android:src="@drawable/welcome"
         android:scaleType="fitXY" />
 
     <ImageButton
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:id="@+id/pickerButton"
+        android:src="@drawable/forward_btn"
+        android:scaleType="fitXY"
+        android:background="@null"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="50dp"
-        android:layout_marginRight="50dp" />
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="15dp" />
 
     <ImageView
         android:id="@+id/splashScreen"
@@ -25,6 +28,5 @@
         android:layout_height="fill_parent"
         android:src="@drawable/nuvents_splash_screen"
         android:scaleType="fitXY" />
-
 
 </RelativeLayout>
