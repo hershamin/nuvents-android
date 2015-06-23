@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -76,8 +78,14 @@ public class DetailActivity extends ActionBarActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            JSONObject json = GlobalVariables.tempJson;
-            view.loadUrl("javascript:setEvent(" + json.toString() + ")");
+            JSONObject event = GlobalVariables.tempJson;
+            // Calculate distance between current location and event location
+            LatLng eventLoc = new LatLng(Double.parseDouble(event.get("latitude").toString()),
+                    Double.parseDouble(event.get("longitude").toString()));
+            LatLng currentLoc = GlobalVariables.currentLoc;
+            double dist = GMapCamera.distanceBetween(eventLoc, currentLoc);
+            event.put("distance", dist);
+            view.loadUrl("javascript:setEvent(" + event.toString() + ")");
             super.onPageFinished(view, url);
         }
     }
