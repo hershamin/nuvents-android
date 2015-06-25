@@ -44,7 +44,7 @@ public class ListActivity extends ActionBarActivity {
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
-        webView.loadUrl(GlobalVariables.listView);
+        webView.loadUrl("file:///android_asset/listView.html");
         searchField = (EditText) findViewById(R.id.searchField);
         searchField.addTextChangedListener(searchFieldWatcher);
         mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);

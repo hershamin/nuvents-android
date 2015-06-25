@@ -34,7 +34,7 @@ public class DetailActivity extends ActionBarActivity {
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
-        webView.loadUrl(GlobalVariables.detailView);
+        webView.loadUrl("file:///android_asset/detailView.html");
 
         // Record hit on event website by issuing a http get request
         String urlString = GlobalVariables.tempJson.get("website").toString();

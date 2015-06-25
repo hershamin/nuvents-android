@@ -30,7 +30,7 @@ public class CategoryActivity extends ActionBarActivity {
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
-        webView.loadUrl(GlobalVariables.categoryView);
+        webView.loadUrl("file:///android_asset/categoryView.html");
         homeBtn = (ImageButton) findViewById(R.id.homeBtn);
         homeBtn.setOnClickListener(homeBtnClicked);
 
