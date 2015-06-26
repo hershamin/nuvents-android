@@ -212,6 +212,11 @@ public class NuVentsBackend {
         nSocket.emit("event:website", obj);
     }
 
+    // Send event request to add city
+    public void sendEventReq(String request) {
+        nSocket.emit("event:request", request);
+    }
+
     // Get event detail
     public void getEventDetail(String eventID, final JSONCallable callback) {
         JSONObject obj = new JSONObject();

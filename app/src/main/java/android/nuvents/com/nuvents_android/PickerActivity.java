@@ -53,6 +53,10 @@ public class PickerActivity extends ActionBarActivity {
                 Intent categoryView = new Intent(getApplicationContext(), CategoryActivity.class);
                 startActivity(categoryView);
                 return true;
+            } else if (url.contains("sendeventrequest://")) {
+                String request = url.split("//")[1];
+                WelcomeActivity.sendEventRequest(request);
+                return true;
             } else {
                 return false;
             }

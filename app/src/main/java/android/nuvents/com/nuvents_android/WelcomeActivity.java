@@ -141,6 +141,11 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         GlobalVariables.api.sendWebsiteCode(website, statusCode);
     }
 
+    // Send event request to add city
+    public static void sendEventRequest(String request) {
+        GlobalVariables.api.sendEventReq(request);
+    }
+
     // Get event detail
     public static void getEventDetail(final String eid, final JSONCallable callback) {
         GlobalVariables.api.getEventDetail(eid, new JSONCallable() {
