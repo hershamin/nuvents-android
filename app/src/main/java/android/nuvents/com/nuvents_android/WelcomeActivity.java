@@ -161,6 +161,8 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     public void nuventsServerDidReceiveNearbyEvent(JSONObject event) {
         // Add to global vars
         GlobalVariables.eventJson.put((String) event.get("eid"), event);
+        // Update count in picker activity
+        PickerActivity.updateEventCount();
     }
 
     @Override

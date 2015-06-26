@@ -31,6 +31,7 @@ public class PickerActivity extends ActionBarActivity {
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
         webView.loadUrl("file:///android_asset/pickerView.html");
+        GlobalVariables.pickerWebView = webView;
 
     }
 
@@ -68,6 +69,21 @@ public class PickerActivity extends ActionBarActivity {
             // Send to webview
             view.loadUrl("javascript:setImgUrl(\"" + imgURL + "\")");
             super.onPageFinished(view, url);
+        }
+    }
+
+    // Update event count
+    public static void updateEventCount() {
+        // Convert hashmap to json
+        final Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
+        final WebView webView = GlobalVariables.pickerWebView;
+        if (webView != null) {
+            webView.post(new Runnable() {
+                @Override
+                public void run() {
+                    webView.loadUrl("javascript:setEventCount(" + eventMap.keySet().size() + ")");
+                }
+            });
         }
     }
 

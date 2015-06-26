@@ -5,6 +5,7 @@ package android.nuvents.com.nuvents_android;
  */
 
 import android.app.Application;
+import android.webkit.WebView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -41,6 +42,7 @@ public class GlobalVariables extends Application {
     public static LatLng currentLoc; // Current location
     public static String category; // To set event category
     public static NuVentsBackend api; // NuVents backend API
+    public static WebView pickerWebView; // Picker View Web View
 
     private static GlobalVariables singleton;
 
