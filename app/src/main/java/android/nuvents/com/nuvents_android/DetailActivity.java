@@ -1,5 +1,7 @@
 package android.nuvents.com.nuvents_android;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,6 +17,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.simple.JSONObject;
+
+import java.util.Locale;
 
 
 public class DetailActivity extends ActionBarActivity {
@@ -64,12 +68,27 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Open location in maps app
+    private void openMapsApp(String lat, String lng) {
+        String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=%f,%f", Float.parseFloat(lat),
+                Float.parseFloat(lng), Float.parseFloat(lat), Float.parseFloat(lng));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplicationContext().startActivity(intent);
+    }
+
     // Webview delegate methods
     private class UIWebView extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView webView, String url) {
             if (url.contains("closedetailview://")) {
                 finish();
+                return true;
+            } else if (url.contains("opendirections://")) {
+                String loc = url.split("//")[1];
+                String lat = loc.split(",")[0];
+                String lng = loc.split(",")[1];
+                openMapsApp(lat, lng);
                 return true;
             } else {
                 return false;
