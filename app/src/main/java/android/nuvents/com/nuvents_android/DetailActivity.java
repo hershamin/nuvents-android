@@ -3,6 +3,7 @@ package android.nuvents.com.nuvents_android;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.CalendarContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,6 +18,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import java.util.Locale;
 
@@ -68,6 +70,21 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Open event in calendar app
+    private void openCalendarApp(String jsonString) {
+        Object rawObj = JSONValue.parse(jsonString);
+        JSONObject event = (JSONObject)rawObj;
+        Intent calIntent = new Intent(Intent.ACTION_INSERT);
+        calIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        calIntent.setData(CalendarContract.Events.CONTENT_URI);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.get("startDate").toString());
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.get("endDate").toString());
+        calIntent.putExtra(CalendarContract.Events.TITLE, event.get("title").toString());
+        calIntent.putExtra(CalendarContract.Events.DESCRIPTION, event.get("description").toString());
+        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, event.get("location").toString());
+        startActivity(calIntent);
+    }
+
     // Open location in maps app
     private void openMapsApp(String lat, String lng) {
         String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=%f,%f", Float.parseFloat(lat),
@@ -89,6 +106,10 @@ public class DetailActivity extends ActionBarActivity {
                 String lat = loc.split(",")[0];
                 String lng = loc.split(",")[1];
                 openMapsApp(lat, lng);
+                return true;
+            } else if (url.contains("opencalendar://")) {
+                String jsonString = url.split("//")[1];
+                openCalendarApp(jsonString);
                 return true;
             } else {
                 return false;
