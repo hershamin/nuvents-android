@@ -90,7 +90,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     // Request nearby events
     void requestNearbyEvents() {
         LatLng loc = GlobalVariables.currentLoc; // Get current location
-        api.getNearbyEvents(loc, 5000); // Search within 5000 meters
+        api.getNearbyEvents(loc, 5000, (float)System.currentTimeMillis()/(float)1000.0); // Search within 5000 meters
         runOnUiThread(new Runnable() { // Set picker button visible
             @Override
             public void run() {

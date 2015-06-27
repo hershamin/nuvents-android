@@ -195,11 +195,12 @@ public class NuVentsBackend {
     }
 
     // Get nearby events
-    public void getNearbyEvents(LatLng location, float radius) {
+    public void getNearbyEvents(LatLng location, float radius, float timestamp) {
         JSONObject obj = new JSONObject();
         obj.put("lat", "" + location.latitude);
         obj.put("lng", "" + location.longitude);
         obj.put("rad", "" + radius);
+        obj.put("time", "" + timestamp);
         obj.put("did", deviceID);
         nSocket.emit("event:nearby", obj);
     }
