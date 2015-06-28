@@ -8,8 +8,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -26,6 +29,8 @@ import java.util.Locale;
 public class DetailActivity extends ActionBarActivity {
 
     WebView webView;
+    TextView titleText;
+    ImageButton backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +47,24 @@ public class DetailActivity extends ActionBarActivity {
         webView.setWebViewClient(new UIWebView());
         webView.loadUrl("file:///android_asset/detailView.html");
 
+        // Init variables
+        titleText = (TextView) findViewById(R.id.titleText);
+        backButton = (ImageButton) findViewById(R.id.backButton);
+        backButton.setOnClickListener(backButtonPressed);
+
         // Record hit on event website by issuing a http get request
         String urlString = GlobalVariables.tempJson.get("website").toString();
         new IssueHttpGet().execute(urlString); // Call class declared at the bottom of this file
 
     }
+
+    // Back button pressed
+    ImageButton.OnClickListener backButtonPressed = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            finish();
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,8 +142,19 @@ public class DetailActivity extends ActionBarActivity {
                     Double.parseDouble(event.get("longitude").toString()));
             LatLng currentLoc = GlobalVariables.currentLoc;
             double dist = GMapCamera.distanceBetween(eventLoc, currentLoc);
+
             event.put("distance", dist);
             view.loadUrl("javascript:setEvent(" + event.toString() + ")");
+
+            // Native nav-bar stuff. Add the label of the event to the nav-bar
+            final String labelText = event.get("distance").toString();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    titleText.setText(labelText);
+                }
+            });
+
             super.onPageFinished(view, url);
         }
     }
