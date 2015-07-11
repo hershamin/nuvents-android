@@ -31,6 +31,8 @@ public class DetailActivity extends ActionBarActivity {
     WebView webView;
     TextView titleText;
     ImageButton backButton;
+    ImageButton mapButton;
+    JSONObject event = GlobalVariables.tempJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,8 @@ public class DetailActivity extends ActionBarActivity {
         titleText = (TextView) findViewById(R.id.titleText);
         backButton = (ImageButton) findViewById(R.id.backButton);
         backButton.setOnClickListener(backButtonPressed);
+        mapButton = (ImageButton) findViewById(R.id.mapButton);
+        mapButton.setOnClickListener(mapButtonPressed);
 
         // Record hit on event website by issuing a http get request
         String urlString = GlobalVariables.tempJson.get("website").toString();
@@ -63,6 +67,14 @@ public class DetailActivity extends ActionBarActivity {
         @Override
         public void onClick(View v) {
             finish();
+        }
+    };
+
+    // Map button pressed
+    ImageButton.OnClickListener mapButtonPressed = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            openMapsApp();
         }
     };
 
@@ -104,9 +116,9 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     // Open location in maps app
-    private void openMapsApp(String lat, String lng) {
-        String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=%f,%f", Float.parseFloat(lat),
-                Float.parseFloat(lng), Float.parseFloat(lat), Float.parseFloat(lng));
+    private void openMapsApp() {
+        String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=%s", Float.parseFloat(event.get("latitude").toString()),
+                Float.parseFloat(event.get("longitude").toString()), event.get("address").toString());
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplicationContext().startActivity(intent);
@@ -120,10 +132,7 @@ public class DetailActivity extends ActionBarActivity {
                 finish();
                 return true;
             } else if (url.contains("opendirections://")) {
-                String loc = url.split("//")[1];
-                String lat = loc.split(",")[0];
-                String lng = loc.split(",")[1];
-                openMapsApp(lat, lng);
+                openMapsApp();
                 return true;
             } else if (url.contains("opencalendar://")) {
                 String jsonString = url.split("//")[1];
@@ -136,7 +145,6 @@ public class DetailActivity extends ActionBarActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            JSONObject event = GlobalVariables.tempJson;
             // Calculate distance between current location and event location
             LatLng eventLoc = new LatLng(Double.parseDouble(event.get("latitude").toString()),
                     Double.parseDouble(event.get("longitude").toString()));
