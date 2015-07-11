@@ -27,7 +27,6 @@ import java.util.Map;
 public class ListActivity extends ActionBarActivity {
 
     WebView webView;
-    EditText searchField;
     LinearLayout mainLinLay;
     ImageButton homeBtn;
 
@@ -45,8 +44,6 @@ public class ListActivity extends ActionBarActivity {
         webView.getSettings().setAllowFileAccess(true);
         webView.setWebViewClient(new UIWebView());
         webView.loadUrl("file:///android_asset/listView.html");
-        searchField = (EditText) findViewById(R.id.searchField);
-        searchField.addTextChangedListener(searchFieldWatcher);
         mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
         mainLinLay.setOnTouchListener(screenTouchListener);
         homeBtn = (ImageButton) findViewById(R.id.homeBtn);
@@ -72,30 +69,6 @@ public class ListActivity extends ActionBarActivity {
             Intent pickerView = new Intent(getApplicationContext(), PickerActivity.class);
             pickerView.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(pickerView);
-        }
-    };
-
-    // Search field changed value
-    TextWatcher searchFieldWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            //
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            boolean searchProcess = GlobalVariables.searchProc;
-            if (!searchProcess) { // Search process free
-                searchProcess = true;
-                String searchText = searchField.getText().toString();
-                webView.loadUrl("javascript:searchByTitle('" + searchText + "')");
-                searchProcess = false;
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            //
         }
     };
 

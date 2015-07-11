@@ -38,7 +38,6 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
 
     ImageButton myLocBtn;
     ImageButton homeBtn;
-    EditText searchField;
     LinearLayout mainLinLay;
     Point size = new Point();
 
@@ -53,16 +52,12 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
         myLocBtn.setOnClickListener(myLocBtnPressed);
         homeBtn = (ImageButton) findViewById(R.id.homeBtn);
         homeBtn.setOnClickListener(homeBtnClicked);
-        searchField = (EditText) findViewById(R.id.searchField);
         mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
         mainLinLay.setOnTouchListener(screenTouchListener);
 
         // MapView
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        // Init search field
-        searchField.addTextChangedListener(searchFieldWatcher);
 
     }
 
@@ -84,29 +79,6 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
             Intent pickerView = new Intent(getApplicationContext(), PickerActivity.class);
             pickerView.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(pickerView);
-        }
-    };
-
-    // Search field changed value
-    TextWatcher searchFieldWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            //
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            boolean searchProcess = GlobalVariables.searchProc;
-            if (!searchProcess) { // Search process free
-                searchProcess = true;
-                GMapCamera.searchEventsByTitle(s.toString());
-                searchProcess = false;
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            //
         }
     };
 
