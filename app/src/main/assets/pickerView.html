@@ -2,20 +2,28 @@
     <title>Picker View</title>
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script>
             window.setEventCount = function(data) {
-                // Process data to friendlier json
+                // Parse into string if not already a string
                 try {
                     data = String(data)
                 } catch (e) {}
                 angular.element(document.querySelector("body")).scope().setEventCount(data);
             }
 			window.setImgUrl = function(data) {
-                // Process data to friendlier json
+                // Parse into string if not already a string
                 try {
                     data = String(data)
                 } catch (e) {}
                 angular.element(document.querySelector("body")).scope().setImgUrl(data);
+            }
+            window.setLocation = function(data) {
+                // Parse into string if not already a string
+                try {
+                    data = String(data)
+                } catch (e) {}
+                angular.element(document.querySelector("body")).scope().setLocation(data);
             }
             var pickerViewApp = angular.module("pickerViewApp", []);
             pickerViewApp.controller("pickerViewCtrl", function ($scope, $http) {
@@ -29,8 +37,41 @@
                         $scope.imgUrl = data;
                     })
                 }
+                $scope.setLocation = function(data) {
+                    $scope.$apply(function() {
+                        $scope.location = data;
+                         var response = $http.get("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + data);
+                         response.success(function(res) {
+                             var components = res.results[0].address_components
+                             for (var i=0; i<components.length; i++) {
+                                  if (components[i].types.indexOf("locality") > -1) {
+                                      $scope.city = components[i].long_name
+                                  }
+                                  if (components[i].types.indexOf("administrative_area_level_1") > -1) {
+                                      $scope.state = components[i].short_name
+                                  }
+                                  if (components[i].types.indexOf("postal_code") > -1) {
+                                      $scope.zipCode = components[i].long_name
+                                  }
+                              }
+                              $scope.currentCity = $scope.city + ", " + $scope.state
+                         })
+                         response.error(function(res) {
+                             alert("Failure: " + res)
+                         })
+                    })
+                }
                 $scope.openView = function(view) {
                     window.location = "open" + view + "View://";
+                }
+                $scope.user = {
+                    email: '',
+                    name: ''
+                }
+                $scope.sentReq = false
+                $scope.submitForm = function(isValid) {
+                    $scope.sentReq = true
+                    window.location = "sendEventRequest://?name=" + $scope.user.name + "&email=" + $scope.user.email + "&city=" + $scope.city + "&state=" + $scope.state + "&zip=" + $scope.zipCode + "&latlng=" + $scope.location;
                 }
             })
         </script>
@@ -49,7 +90,7 @@
             height:10%;
             background-color: #F49A8C;
             color: #1C3C6D;
-            font-size: 150%;
+            font-size: 3.5vh;
             text-align: center;
           }
           #categoryBtn {
@@ -86,11 +127,41 @@
             color: #ED5857;
             font-size: 180%;
           }
+        .container {
+            width: 100%;
+            height: 100%;
+            color: white;
+        }
+        .container h2 {
+            font-size: 20x;
+        }
         </style>  
     </head>
     <body ng-controller="pickerViewCtrl">
       <div id="outerDiv">
-        <div id="eventCount">{{eventCount}} events happening nearby</div>
+          <div ng-if="eventCount == 0">
+              <img ng-src="{{imgUrl}}" style="position:absolute; z-index:-1" width="100%" height="100%">
+              <div class="container">
+                  <h2>Uh oh. We haven't added {{currentCity}} yet! Give us your email and and we'll be sure to find you the right events ASAP!</h2>
+                  <form name="emailForm" ng-submit="submitForm(emailForm.$valid)">
+                      <div class="form-group">
+                          <label for="name">Name:</label>
+                          <input type="name" class="form-control" name="input" ng-model="user.name" placeholder="Enter name" required>
+                              <label for="email">Email:</label>
+                              <input type="email" class="form-control" name="input" ng-model="user.email" placeholder="Enter email">
+                              </div>
+                      <div role="alert">
+                            <span class="error" ng-show="emailForm.input.$error.email"><strong>Not a valid e-mail address!</strong></span>
+                      </div>
+                      <button ng-if="!sentReq" type="submit" class="btn btn-default" ng-disabled="emailForm.$invalid">Submit</button>
+                      <h4 ng-if="sentReq"><strong>Request successfuly sent, We'll notify you via email as soon as we find events for your city!!</strong></h4>
+                  </form>
+                  
+             
+              </div>
+        </div>
+          <div ng-if="eventCount > 0">
+        <div id="eventCount"><br><strong>{{eventCount}}</strong> events happening nearby!</div>
         <button id="categoryBtn" ng-click="openView('Category')">Categories</button>
         <div id="mapBtn">
           Map <br>
@@ -98,5 +169,8 @@
         </div>
         <button id="listBtn" ng-click="openView('List')">List View</button>
       </div>
+    </div>
+</div>
+
     </body>
 </html>
