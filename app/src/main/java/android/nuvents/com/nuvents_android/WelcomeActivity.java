@@ -54,6 +54,25 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
             e.printStackTrace();
         }
 
+        // Hide splash screen if override is set from picker activity
+        Boolean splashOverride = getIntent().getBooleanExtra(PickerActivity.EXTRA_MESSAGE, false);
+        if (splashOverride) {
+            // This signifies refresh button is pressed from picker activity
+            ImageView splashScreen = (ImageView) findViewById(R.id.splashScreen);
+            splashScreen.setVisibility(View.INVISIBLE);
+            GlobalVariables.eventJson.clear();
+            MyLocation.LocationResult newLocRes = new MyLocation.LocationResult() {
+                @Override
+                public void gotLocation(Location location) {
+                    GlobalVariables.currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+                    requestNearbyEvents();
+                    nuventsServerDidSyncResources();
+                }
+            };
+            MyLocation newLoc = new MyLocation();
+            newLoc.getLocation(this, newLocRes);
+        }
+
         // Init activity indicator
         activityIndicator = (ProgressBar) findViewById(R.id.activityIndicator);
         activityIndicator.setVisibility(View.VISIBLE);

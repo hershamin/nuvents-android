@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -21,8 +22,11 @@ import java.util.Random;
 
 public class PickerActivity extends ActionBarActivity {
 
+    public final static String EXTRA_MESSAGE = "com.nuvents.android.SplashScreenOverride";
+
     WebView webView;
     public ProgressBar activityIndicator;
+    ImageButton refreshBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,8 @@ public class PickerActivity extends ActionBarActivity {
         webView.setWebViewClient(new UIWebView());
         webView.loadUrl("file:///android_asset/pickerView.html");
         GlobalVariables.pickerWebView = webView;
+        refreshBtn = (ImageButton) findViewById(R.id.refreshBtn);
+        refreshBtn.setOnClickListener(pickerBtnPressed);
 
         // Init activity indicator
         activityIndicator = (ProgressBar) findViewById(R.id.activityIndicator);
@@ -46,6 +52,18 @@ public class PickerActivity extends ActionBarActivity {
         activityIndicator.setIndeterminate(true);
 
     }
+
+    // Refresh btn pressed
+    ImageButton.OnClickListener pickerBtnPressed = new ImageButton.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // Go to welcome activity to refresh nearby events
+            Intent welcomeView = new Intent(getApplicationContext(), WelcomeActivity.class);
+            welcomeView.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            welcomeView.putExtra(EXTRA_MESSAGE, true);
+            startActivity(welcomeView);
+        }
+    };
 
     // Webview delegate methods
     private class UIWebView extends WebViewClient {
