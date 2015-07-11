@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.location.Location;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,11 +67,11 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             if (checkedId == R.id.allBtn) {
-                Log.i("CHECK", "ALL");
+                GMapCamera.filterEventsByDate("all", size);
             } else if (checkedId == R.id.todayBtn) {
-                Log.i("CHECK", "TOD");
+                GMapCamera.filterEventsByDate("today", size);
             } else if (checkedId == R.id.tomorrowBtn) {
-                Log.i("CHECK", "TOM");
+                GMapCamera.filterEventsByDate("tomorrow", size);
             }
         }
     };

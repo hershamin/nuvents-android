@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
-import android.webkit.WebView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
@@ -16,6 +15,8 @@ import com.google.android.gms.maps.model.Marker;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 
@@ -45,21 +46,64 @@ public class GMapCamera {
         }
     }
 
-    // Search events
-    public static void searchEventsByTitle(String searchTerm) {
+    // Filter events in mapview based on date
+    public static void filterEventsByDate(String filterTerm, Point size) {
         GoogleMap mapView = GlobalVariables.mapView;
         Map<String, JSONObject> events = GlobalVariables.eventJson;
         ArrayList<Marker> markers = GlobalVariables.eventMarkers;
-        String searchText = searchTerm.toLowerCase();
+
+        // Skip if mapview is not loaded into memory
+        if (mapView == null) {
+            return;
+        }
+
+        // Cluster markers if filter term is all (all events)
+        if (filterTerm == "all") {
+            clusterMarkers(mapView, mapView.getCameraPosition(), null, size);
+        }
 
         // Iterate and filter (mapView)
         for (Marker marker : markers) {
+            // Get required info
             JSONObject event = events.get(marker.getTitle());
-            String title = event.get("title").toString().toLowerCase();
-            if (title.contains(searchText)) { // Search term found in event title
+            String eventDate = ((JSONObject)event.get("time")).get("start").toString();
+            Calendar eventDay = Calendar.getInstance();
+            eventDay.setTime(new Date(Long.parseLong(eventDate) * 1000));
+            Calendar today = Calendar.getInstance();
+            today.setTime(new Date());
+            // No filters
+            if (filterTerm == "all") {
                 marker.setVisible(true);
-            } else {
-                marker.setVisible(false);
+            }
+            // Today filter
+            if (filterTerm == "today") {
+                if (today.get(Calendar.YEAR) == eventDay.get(Calendar.YEAR) &&
+                        today.get(Calendar.MONTH) == eventDay.get(Calendar.MONTH) &&
+                        today.get(Calendar.DATE) == eventDay.get(Calendar.DATE)) {
+                    marker.setVisible(true);
+                    // Ensure marker icon is not a small dot (cluster icon)
+                    Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
+                            .getResourcePath(marker.getSnippet(), "marker", false));
+                    markerIcon = NuVentsBackend.resizeImage(markerIcon, 85);
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
+                } else {
+                    marker.setVisible(false);
+                }
+            }
+            // Tomorrow filter
+            if (filterTerm == "tomorrow") {
+                if (today.get(Calendar.YEAR) == eventDay.get(Calendar.YEAR) &&
+                        today.get(Calendar.MONTH) == eventDay.get(Calendar.MONTH) &&
+                        today.get(Calendar.DATE) == (eventDay.get(Calendar.DATE) - 1)) {
+                    marker.setVisible(true);
+                    // Ensure marker icon is not a small dot (cluster icon)
+                    Bitmap markerIcon = BitmapFactory.decodeFile(NuVentsBackend
+                            .getResourcePath(marker.getSnippet(), "marker", false));
+                    markerIcon = NuVentsBackend.resizeImage(markerIcon, 85);
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(markerIcon));
+                } else {
+                    marker.setVisible(false);
+                }
             }
         }
     }
