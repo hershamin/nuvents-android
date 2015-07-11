@@ -5,8 +5,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -20,6 +22,7 @@ import java.util.Random;
 public class PickerActivity extends ActionBarActivity {
 
     WebView webView;
+    public ProgressBar activityIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,11 @@ public class PickerActivity extends ActionBarActivity {
         webView.setWebViewClient(new UIWebView());
         webView.loadUrl("file:///android_asset/pickerView.html");
         GlobalVariables.pickerWebView = webView;
+
+        // Init activity indicator
+        activityIndicator = (ProgressBar) findViewById(R.id.activityIndicator);
+        activityIndicator.setVisibility(View.VISIBLE);
+        activityIndicator.setIndeterminate(true);
 
     }
 
@@ -68,6 +76,13 @@ public class PickerActivity extends ActionBarActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            // Hide activity indicator
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    activityIndicator.setVisibility(View.INVISIBLE);
+                }
+            });
             // Convert hashmap to json
             Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
             // Send to webview
