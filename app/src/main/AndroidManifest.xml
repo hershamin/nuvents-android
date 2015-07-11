@@ -53,7 +53,8 @@
         <activity
             android:name=".PickerActivity"
             android:label="@string/title_activity_picker"
-            android:parentActivityName=".WelcomeActivity" >
+            android:parentActivityName=".WelcomeActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.nuvents.com.nuvents_android.WelcomeActivity" />
@@ -61,7 +62,8 @@
         <activity
             android:name=".MapActivity"
             android:label="@string/title_activity_map"
-            android:parentActivityName=".PickerActivity" >
+            android:parentActivityName=".PickerActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.nuvents.com.nuvents_android.PickerActivity" />
@@ -69,7 +71,8 @@
         <activity
             android:name=".ListActivity"
             android:label="@string/title_activity_list"
-            android:parentActivityName=".PickerActivity" >
+            android:parentActivityName=".PickerActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.nuvents.com.nuvents_android.PickerActivity" />
@@ -77,7 +80,8 @@
         <activity
             android:name=".CategoryActivity"
             android:label="@string/title_activity_category"
-            android:parentActivityName=".PickerActivity" >
+            android:parentActivityName=".PickerActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.nuvents.com.nuvents_android.PickerActivity" />
