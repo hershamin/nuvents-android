@@ -36,4 +36,13 @@
         android:src="@drawable/nuvents_splash_screen"
         android:scaleType="fitXY" />
 
+    <ProgressBar
+        android:id="@+id/activityIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp" />
+
 </RelativeLayout>

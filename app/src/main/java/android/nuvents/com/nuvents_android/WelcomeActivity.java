@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import io.fabric.sdk.android.Fabric;
 import org.json.simple.JSONObject;
@@ -34,6 +35,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     public boolean haveLoc = false;
     public ImageButton pickerButton;
     public ImageView backgroundImg;
+    public ProgressBar activityIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,11 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+
+        // Init activity indicator
+        activityIndicator = (ProgressBar) findViewById(R.id.activityIndicator);
+        activityIndicator.setVisibility(View.VISIBLE);
+        activityIndicator.setIndeterminate(true);
 
         // Location manager
         MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
@@ -74,7 +81,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
 
         // Background Images
         backgroundImg = (ImageView) findViewById(R.id.backgroundImg);
-        nuventsServerDidSyncResources(); // Call to set background image if exists
+        setBackgroundImage(); // Call to set background image if exists
 
         // Hide splash screen after delay in specified milli seconds
         new Handler().postDelayed(new Runnable() {
@@ -99,13 +106,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     // Request nearby events
     void requestNearbyEvents() {
         LatLng loc = GlobalVariables.currentLoc; // Get current location
-        api.getNearbyEvents(loc, 5000, (float)System.currentTimeMillis()/(float)1000.0); // Search within 5000 meters
-        runOnUiThread(new Runnable() { // Set picker button visible
-            @Override
-            public void run() {
-                pickerButton.setVisibility(View.VISIBLE);
-            }
-        });
+        api.getNearbyEvents(loc, 5000, (float) System.currentTimeMillis() / (float) 1000.0); // Search within 5000 meters
     }
 
     // Picker Activity button pressed
@@ -142,7 +143,19 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     // NuVents server resources sync complete
     @Override
     public void nuventsServerDidSyncResources() {
+        runOnUiThread(new Runnable() { // Set picker button visible & activity indicator invisible
+            @Override
+            public void run() {
+                pickerButton.setVisibility(View.VISIBLE);
+                activityIndicator.setVisibility(View.INVISIBLE);
+            }
+        });
         // Set Background Image
+        setBackgroundImage();
+    }
+
+    // Set background image if it exists
+    public void setBackgroundImage() {
         String imgDir = NuVentsBackend.getResourcePath("tmp", "welcomeViewImgs", false);
         imgDir = imgDir.replace("tmp","");
         File[] files = new File(imgDir).listFiles();
