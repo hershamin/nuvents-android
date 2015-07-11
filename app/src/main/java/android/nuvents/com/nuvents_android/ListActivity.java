@@ -3,7 +3,6 @@ package android.nuvents.com.nuvents_android;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +26,7 @@ public class ListActivity extends ActionBarActivity {
     WebView webView;
     LinearLayout mainLinLay;
     ImageButton homeBtn;
+    boolean webViewReady = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +58,13 @@ public class ListActivity extends ActionBarActivity {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             if (checkedId == R.id.distanceBtn) {
-                Log.i("CHECK", "DIST");
+                if (webViewReady) {
+                    webView.loadUrl("javascript:sortBy('distance')");
+                }
             } else if (checkedId == R.id.timeBtn) {
-                Log.i("CHECK", "TIME");
+                if (webViewReady) {
+                    webView.loadUrl("javascript:sortBy('time.start')");
+                }
             }
         }
     };
@@ -118,6 +122,7 @@ public class ListActivity extends ActionBarActivity {
                 event.put("distance", dist);
                 eventsJson.put(key, event);
             }
+            webViewReady = true;
             // Send events to listview
             view.loadUrl("javascript:setEvents(" + eventsJson + ")");
             super.onPageFinished(view, url);
