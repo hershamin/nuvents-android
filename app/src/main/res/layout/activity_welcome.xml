@@ -5,6 +5,13 @@
     tools:context="android.nuvents.com.nuvents_android.PickerActivity">
 
     <ImageView
+        android:id="@+id/backgroundImg"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ED5857"
+        android:scaleType="fitXY" />
+
+    <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:src="@drawable/welcome"

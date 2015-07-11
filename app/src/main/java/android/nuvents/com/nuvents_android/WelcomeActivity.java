@@ -1,6 +1,8 @@
 package android.nuvents.com.nuvents_android;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
@@ -19,7 +21,9 @@ import android.widget.ImageView;
 import io.fabric.sdk.android.Fabric;
 import org.json.simple.JSONObject;
 
+import java.io.File;
 import java.net.URISyntaxException;
+import java.util.Random;
 
 public class WelcomeActivity extends ActionBarActivity implements NuVentsBackendDelegate {
 
@@ -29,6 +33,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     public boolean serverConn = false;
     public boolean haveLoc = false;
     public ImageButton pickerButton;
+    public ImageView backgroundImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,10 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         pickerButton = (ImageButton) findViewById(R.id.pickerButton);
         pickerButton.setOnClickListener(pickerButtonPressed);
         pickerButton.setVisibility(View.INVISIBLE); // hide picker button
+
+        // Background Images
+        backgroundImg = (ImageView) findViewById(R.id.backgroundImg);
+        nuventsServerDidSyncResources(); // Call to set background image if exists
 
         // Hide splash screen after delay in specified milli seconds
         new Handler().postDelayed(new Runnable() {
@@ -133,7 +142,20 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     // NuVents server resources sync complete
     @Override
     public void nuventsServerDidSyncResources() {
-        //
+        // Set Background Image
+        String imgDir = NuVentsBackend.getResourcePath("tmp", "welcomeViewImgs", false);
+        imgDir = imgDir.replace("tmp","");
+        File[] files = new File(imgDir).listFiles();
+        if (files.length == 0) { return; } // Skip if directory is empty
+        int randomInd = new Random().nextInt(files.length); // Pick random img to display
+        final Bitmap bgImg = BitmapFactory.decodeFile(files[randomInd].getAbsolutePath());
+        // Set background image
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                backgroundImg.setImageBitmap(bgImg);
+            }
+        });
     }
 
     // Send event website response code

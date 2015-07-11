@@ -8,9 +8,13 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.simple.JSONObject;
 
+import java.io.File;
 import java.util.Map;
+import java.util.Random;
 
 
 public class PickerActivity extends ActionBarActivity {
@@ -68,10 +72,19 @@ public class PickerActivity extends ActionBarActivity {
             Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
             // Send to webview
             view.loadUrl("javascript:setEventCount(" + eventMap.keySet().size() + ")");
-            // Get image url from assets
-            String imgURL = "file:///android_asset/catViewBack.png";
-            // Send to webview
-            view.loadUrl("javascript:setImgUrl(\"" + imgURL + "\")");
+            // Get image url from welcome view backgrounds & send to webview
+            String imgDir = NuVentsBackend.getResourcePath("tmp", "welcomeViewImgs", false);
+            imgDir = imgDir.replace("tmp","");
+            File[] files = new File(imgDir).listFiles();
+            if (files.length > 0) { // proceed if images are available
+                int randomInd = new Random().nextInt(files.length); // Pick random img to display
+                // Send to webview
+                view.loadUrl("javascript:setImgUrl(\"" + files[randomInd].getAbsolutePath() + "\")");
+            }
+            // Send current location coordinates to webview
+            LatLng currentLoc = GlobalVariables.currentLoc;
+            view.loadUrl("javascript:setLocation(\"" + currentLoc.latitude + "," +
+                    currentLoc.longitude + "\")");
             super.onPageFinished(view, url);
         }
     }
