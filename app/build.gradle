@@ -39,6 +39,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.google.android.gms:play-services:7.0.0'
     compile 'com.github.nkzawa:socket.io-client:0.3.0'
+    compile 'info.hoang8f:android-segmented:1.0.5'
     compile('com.crashlytics.sdk.android:crashlytics:2.3.2@aar') {
         transitive = true;
     }

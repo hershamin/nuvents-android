@@ -6,8 +6,39 @@
     android:orientation="vertical">
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="60dp">
-
+        android:layout_height="60dp"
+        android:background="#1C3C6D" >
+        <info.hoang8f.android.segmented.SegmentedGroup
+            xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/segmentedCtrl"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            segmentedgroup:border_width="2dp"
+            segmentedgroup:corner_radius="8dp"
+            segmentedgroup:tint_color="#ED5857"
+            segmentedgroup:checked_text_color="#1C3C6D" >
+            <RadioButton
+                android:id="@+id/allBtn"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                style="@style/RadioButton"
+                android:text="All" />
+            <RadioButton
+                android:id="@+id/todayBtn"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                style="@style/RadioButton"
+                android:text="Today" />
+            <RadioButton
+                android:id="@+id/tomorrowBtn"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                style="@style/RadioButton"
+                android:text="Tomorrow" />
+        </info.hoang8f.android.segmented.SegmentedGroup>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="fill_parent"

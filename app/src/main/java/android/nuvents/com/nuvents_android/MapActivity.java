@@ -1,6 +1,5 @@
 package android.nuvents.com.nuvents_android;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,16 +7,13 @@ import android.graphics.Point;
 import android.location.Location;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,6 +28,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.simple.JSONObject;
 
 import java.util.Map;
+
+import info.hoang8f.android.segmented.SegmentedGroup;
 
 
 public class MapActivity extends ActionBarActivity implements OnMapReadyCallback {
@@ -53,21 +51,29 @@ public class MapActivity extends ActionBarActivity implements OnMapReadyCallback
         homeBtn = (ImageButton) findViewById(R.id.homeBtn);
         homeBtn.setOnClickListener(homeBtnClicked);
         mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
-        mainLinLay.setOnTouchListener(screenTouchListener);
 
         // MapView
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        // Check all button in segmented control
+        SegmentedGroup sGroup = (SegmentedGroup) findViewById(R.id.segmentedCtrl);
+        sGroup.setOnCheckedChangeListener(filterChanged);
+        sGroup.check(R.id.allBtn);
+
     }
 
-    // Dismiss text field on clicks anywhere other than keyboard
-    View.OnTouchListener screenTouchListener = new View.OnTouchListener(){
+    // Called when filter type changed
+    SegmentedGroup.OnCheckedChangeListener filterChanged = new RadioGroup.OnCheckedChangeListener() {
         @Override
-        public boolean onTouch(View view, MotionEvent ev) {
-            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            return false;
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (checkedId == R.id.allBtn) {
+                Log.i("CHECK", "ALL");
+            } else if (checkedId == R.id.todayBtn) {
+                Log.i("CHECK", "TOD");
+            } else if (checkedId == R.id.tomorrowBtn) {
+                Log.i("CHECK", "TOM");
+            }
         }
     };
 

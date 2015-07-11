@@ -1,27 +1,25 @@
 package android.nuvents.com.nuvents_android;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.simple.JSONObject;
 
 import java.util.Map;
+
+import info.hoang8f.android.segmented.SegmentedGroup;
 
 
 public class ListActivity extends ActionBarActivity {
@@ -45,19 +43,25 @@ public class ListActivity extends ActionBarActivity {
         webView.setWebViewClient(new UIWebView());
         webView.loadUrl("file:///android_asset/listView.html");
         mainLinLay = (LinearLayout) findViewById(R.id.mainLinLay);
-        mainLinLay.setOnTouchListener(screenTouchListener);
         homeBtn = (ImageButton) findViewById(R.id.homeBtn);
         homeBtn.setOnClickListener(homeBtnClicked);
 
+        // Check distance button in segmented control
+        SegmentedGroup sGroup = (SegmentedGroup) findViewById(R.id.segmentedCtrl);
+        sGroup.setOnCheckedChangeListener(filterChanged);
+        sGroup.check(R.id.distanceBtn);
+
     }
 
-    // Dismiss text field on clicks anywhere other than keyboard
-    View.OnTouchListener screenTouchListener = new View.OnTouchListener(){
+    // Called when filter type changed
+    SegmentedGroup.OnCheckedChangeListener filterChanged = new RadioGroup.OnCheckedChangeListener() {
         @Override
-        public boolean onTouch(View view, MotionEvent ev) {
-            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            return false;
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (checkedId == R.id.distanceBtn) {
+                Log.i("CHECK", "DIST");
+            } else if (checkedId == R.id.timeBtn) {
+                Log.i("CHECK", "TIME");
+            }
         }
     };
 
