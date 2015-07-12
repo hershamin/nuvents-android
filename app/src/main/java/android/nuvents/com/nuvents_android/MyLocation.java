@@ -2,11 +2,16 @@ package android.nuvents.com.nuvents_android;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 
 /**
  * Created by hersh on 6/5/15.
@@ -27,7 +32,7 @@ public class MyLocation {
     boolean gpsEnabled = false;
     boolean networkEnabled = false;
 
-    public boolean getLocation(Context context, LocationResult result) {
+    public boolean getLocation(final Context context, LocationResult result) {
         // Use LocationResult callback class to pass location from MyLocation to user code
         locationResult = result;
         if (lm == null) {
@@ -42,8 +47,20 @@ public class MyLocation {
             networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         } catch (Exception ex) {}
 
-        // don't start listeners if no provider is enabled
+        // don't start listeners if no provider is enabled, Alert user instead
         if (!gpsEnabled && !networkEnabled) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+            alertDialog.setMessage("Looks like gps and/or network location is disabled! Please " +
+                    "go to settings and enabled them to search for events nearby!!");
+            alertDialog.setPositiveButton("Open Location Settings", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent locationIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    context.startActivity(locationIntent);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", null);
+            alertDialog.show();
             return false;
         }
 
