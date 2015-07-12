@@ -9,6 +9,19 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <compatible-screens>
+        <!-- all small size screens -->
+        <screen android:screenDensity="mdpi" android:screenSize="small" />
+        <screen android:screenDensity="hdpi" android:screenSize="small" />
+        <screen android:screenDensity="xhdpi" android:screenSize="small" />
+        <screen android:screenDensity="480" android:screenSize="small" /> <!-- xxhdpi -->
+        <!-- all normal size screens -->
+        <screen android:screenDensity="mdpi" android:screenSize="normal" />
+        <screen android:screenDensity="hdpi" android:screenSize="normal" />
+        <screen android:screenDensity="xhdpi" android:screenSize="normal" />
+        <screen android:screenDensity="480" android:screenSize="normal" /> <!-- xxhdpi -->
+    </compatible-screens>
+
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
