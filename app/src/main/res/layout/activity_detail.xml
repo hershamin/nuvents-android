@@ -24,9 +24,13 @@
             android:background="@null" />
         <TextView
             android:id="@+id/titleText"
-            android:layout_marginLeft="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textStyle="bold"
             android:layout_width="275dp"
-            android:layout_height="60dp"
+            android:layout_height="30dp"
             android:textColor="#FFFFFF" />
     </RelativeLayout>
     <WebView

@@ -156,7 +156,11 @@ public class DetailActivity extends ActionBarActivity {
             view.loadUrl("javascript:setEvent(" + event.toString() + ")");
 
             // Native nav-bar stuff. Add the label of the event to the nav-bar
-            final String labelText = event.get("distance").toString();
+            float rawDist = Float.parseFloat(event.get("distance").toString());
+            float distMi = rawDist * (float)0.000621371; // Distance in miles
+            String numText = "" + (Math.round(distMi*10.0)/10.0); // Round
+            if (numText.endsWith(".0")) { numText = numText.split("\\.")[0]; } // Remove trailing zero
+            final String labelText = numText + " Miles Away!";
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
