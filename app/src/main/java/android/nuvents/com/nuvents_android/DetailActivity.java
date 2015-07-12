@@ -23,6 +23,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 
@@ -101,17 +103,17 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     // Open event in calendar app
-    private void openCalendarApp(String jsonString) {
-        Object rawObj = JSONValue.parse(jsonString);
-        JSONObject event = (JSONObject)rawObj;
+    private void openCalendarApp() {
         Intent calIntent = new Intent(Intent.ACTION_INSERT);
         calIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         calIntent.setData(CalendarContract.Events.CONTENT_URI);
-        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.get("startDate").toString());
-        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.get("endDate").toString());
+        String eventStartStr = ((JSONObject)event.get("time")).get("start").toString();
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, Long.parseLong(eventStartStr) * 1000);
+        String eventEndStr = ((JSONObject)event.get("time")).get("end").toString();
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, Long.parseLong(eventEndStr) * 1000);
         calIntent.putExtra(CalendarContract.Events.TITLE, event.get("title").toString());
         calIntent.putExtra(CalendarContract.Events.DESCRIPTION, event.get("description").toString());
-        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, event.get("location").toString());
+        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, event.get("address").toString());
         startActivity(calIntent);
     }
 
@@ -135,8 +137,7 @@ public class DetailActivity extends ActionBarActivity {
                 openMapsApp();
                 return true;
             } else if (url.contains("opencalendar://")) {
-                String jsonString = url.split("//")[1];
-                openCalendarApp(jsonString);
+                openCalendarApp();
                 return true;
             } else {
                 return false;
