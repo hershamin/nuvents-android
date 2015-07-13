@@ -1,4 +1,4 @@
-package android.nuvents.com.nuvents_android;
+package com.nuvents.android1;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -21,10 +21,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 

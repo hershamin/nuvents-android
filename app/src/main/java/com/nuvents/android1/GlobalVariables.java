@@ -1,4 +1,4 @@
-package android.nuvents.com.nuvents_android;
+package com.nuvents.android1;
 
 /**
  * Created by hersh on 5/5/15.
@@ -21,7 +21,7 @@ import java.util.Map;
 public class GlobalVariables extends Application {
 
     // Global constants
-    public final static String server       = "http://backend.nuvents.com/";
+    public final static String server       = "http://repo.nuvents.com:1026/";
     public final static String pickerView   = "http://storage.googleapis.com/nuvents-resources/pickerView.html";
     public final static String categoryView = "http://storage.googleapis.com/nuvents-resources/categoryView.html";
     public final static String listView     = "http://storage.googleapis.com/nuvents-resources/listView.html";

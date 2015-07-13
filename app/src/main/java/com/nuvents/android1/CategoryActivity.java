@@ -1,7 +1,6 @@
-package android.nuvents.com.nuvents_android;
+package com.nuvents.android1;
 
 import android.content.Intent;
-import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;

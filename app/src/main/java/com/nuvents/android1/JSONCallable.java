@@ -1,4 +1,4 @@
-package android.nuvents.com.nuvents_android;
+package com.nuvents.android1;
 
 import org.json.simple.JSONObject;
 

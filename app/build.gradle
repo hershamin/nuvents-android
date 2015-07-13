@@ -20,7 +20,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "android.nuvents.com.nuvents_android"
+        applicationId "com.nuvents.android1"
         minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
@@ -40,7 +40,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.0.0'
     compile 'com.github.nkzawa:socket.io-client:0.3.0'
     compile 'info.hoang8f:android-segmented:1.0.5'
-    compile('com.crashlytics.sdk.android:crashlytics:2.3.2@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
     }
 }

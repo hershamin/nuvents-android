@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="android.nuvents.com.nuvents_android.PickerActivity">
+    tools:context="com.nuvents.android1.PickerActivity">
 
     <ImageView
         android:id="@+id/backgroundImg"
