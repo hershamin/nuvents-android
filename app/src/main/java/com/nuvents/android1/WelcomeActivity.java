@@ -242,7 +242,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
 
     @Override
     public void nuventsServerDidRespondToPing(String response) {
-        Log.i("PING", "RESPONSE: " + response);
+        //
     }
 
     @Override
