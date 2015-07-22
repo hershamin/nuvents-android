@@ -136,8 +136,14 @@ public class DetailActivity extends ActionBarActivity {
             } else if (url.contains("opencalendar://")) {
                 openCalendarApp();
                 return true;
-            } else {
-                return false;
+            } else if (url.contains("file://")) { // File url
+                return false; // Do not override
+            } else { // Any other link
+                // Open in chrome
+                Uri webPage = Uri.parse(url);
+                Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
+                startActivity(intent);
+                return true;
             }
         }
 
