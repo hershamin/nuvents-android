@@ -1,9 +1,11 @@
 package com.nuvents.android1;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,6 +22,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import io.fabric.sdk.android.Fabric;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.simple.JSONObject;
 
 import java.io.File;
@@ -102,6 +109,8 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         backgroundImg = (ImageView) findViewById(R.id.backgroundImg);
         setBackgroundImage(); // Call to set background image if exists
 
+        new checkServerConn().execute(GlobalVariables.server); // Alert user if server is not reachable
+
         // Hide splash screen after delay in specified milli seconds
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -120,6 +129,42 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
             }
         }, SPLASH_TIME_OUT);
 
+    }
+
+    // Check for server connection & alert user if unreachable
+    // Class to record hit using HTTP get request
+    private class checkServerConn extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... params) {
+            Boolean serverConn;
+            try {
+                String urlString = params[0];
+                HttpGet httpReq = new HttpGet(urlString);
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpResponse resp = httpClient.execute(httpReq);
+                serverConn = true; // Some kind of response is received, server is reachable
+            } catch (Exception e) {
+                serverConn = false; // Exception is thrown, server unreachable
+                e.printStackTrace();
+            }
+            return serverConn;
+        }
+        @Override
+        protected void onPostExecute(Boolean status) {
+            if (!status) {
+                // Server is unreachable alert user
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(WelcomeActivity.this);
+                alertDialog.setTitle("Server connection error");
+                alertDialog.setMessage("Either Airplane mode is on or Internet is not reachable");
+                alertDialog.setNegativeButton("OK", null);
+                alertDialog.show();
+            }
+            super.onPostExecute(status);
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
     }
 
     // Request nearby events
