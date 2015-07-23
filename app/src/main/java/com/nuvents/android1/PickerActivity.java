@@ -102,9 +102,20 @@ public class PickerActivity extends ActionBarActivity {
                 }
             });
             // Convert hashmap to json
-            Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
+            final Map<String, JSONObject> eventMap = GlobalVariables.eventJson;
             // Send to webview
             view.loadUrl("javascript:setEventCount(" + eventMap.keySet().size() + ")");
+            // Hide refresh btn if event count is 0
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (eventMap.keySet().size() == 0) {
+                        refreshBtn.setVisibility(View.INVISIBLE);
+                    } else {
+                        refreshBtn.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
             // Get image url from welcome view backgrounds & send to webview
             String imgDir = NuVentsBackend.getResourcePath("tmp", "welcomeViewImgs", false);
             imgDir = imgDir.replace("tmp","");
