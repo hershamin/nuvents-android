@@ -45,7 +45,7 @@ public class PickerActivity extends ActionBarActivity {
         webView.loadUrl("file:///android_asset/pickerView.html");
         GlobalVariables.pickerWebView = webView;
         refreshBtn = (ImageButton) findViewById(R.id.refreshBtn);
-        refreshBtn.setOnClickListener(pickerBtnPressed);
+        refreshBtn.setOnClickListener(refreshBtnPressed);
 
         // Init activity indicator
         activityIndicator = (ProgressBar) findViewById(R.id.activityIndicator);
@@ -55,16 +55,21 @@ public class PickerActivity extends ActionBarActivity {
     }
 
     // Refresh btn pressed
-    ImageButton.OnClickListener pickerBtnPressed = new ImageButton.OnClickListener() {
+    ImageButton.OnClickListener refreshBtnPressed = new ImageButton.OnClickListener() {
         @Override
         public void onClick(View v) {
             // Go to welcome activity to refresh nearby events
-            Intent welcomeView = new Intent(getApplicationContext(), WelcomeActivity.class);
-            welcomeView.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            welcomeView.putExtra(EXTRA_MESSAGE, true);
-            startActivity(welcomeView);
+            goToWelcomeActivity();
         }
     };
+
+    // Go to welcome activity without invoking splash screen
+    private void goToWelcomeActivity() {
+        Intent welcomeView = new Intent(getApplicationContext(), WelcomeActivity.class);
+        welcomeView.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        welcomeView.putExtra(EXTRA_MESSAGE, true);
+        startActivity(welcomeView);
+    }
 
     // Webview delegate methods
     private class UIWebView extends WebViewClient {
@@ -90,7 +95,8 @@ public class PickerActivity extends ActionBarActivity {
                 return true;
             } else if (url.contains("searchavailablecity://")) { // Search for events in available city
                 String request = url.split("//")[1].replace("?","");
-                Log.i("SEARCH", request);
+                GlobalVariables.eventReqLoc = request; // Set event request location
+                goToWelcomeActivity();
                 return true;
             } else {
                 return false;

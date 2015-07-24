@@ -40,6 +40,7 @@ public class GlobalVariables extends Application {
     public static boolean searchProc = false; // true if search process is busy
     public static JSONObject tempJson; // Temp event json to pass to detail view
     public static LatLng currentLoc; // Current location
+    public static String eventReqLoc = ""; // Location where events are requested
     public static String category; // To set event category
     public static NuVentsBackend api; // NuVents backend API
     public static WebView pickerWebView; // Picker View Web View
