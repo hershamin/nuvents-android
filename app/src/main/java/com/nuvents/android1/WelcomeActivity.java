@@ -170,7 +170,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
     // Request nearby events
     void requestNearbyEvents() {
         LatLng loc = GlobalVariables.currentLoc; // Get current location
-        api.getNearbyEvents(loc, 16000, (float) System.currentTimeMillis() / (float) 1000.0); // Search within 16000 meters
+        api.getNearbyEvents(loc, 10000, (float) System.currentTimeMillis() / (float) 1000.0); // Search within 10000 meters
     }
 
     // Picker Activity button pressed
