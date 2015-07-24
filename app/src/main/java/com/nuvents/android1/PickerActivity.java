@@ -3,6 +3,7 @@ package com.nuvents.android1;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -83,9 +84,13 @@ public class PickerActivity extends ActionBarActivity {
                 Intent categoryView = new Intent(getApplicationContext(), CategoryActivity.class);
                 startActivity(categoryView);
                 return true;
-            } else if (url.contains("sendeventrequest://")) {
+            } else if (url.contains("sendeventrequest://")) { // Send request to add city to backend
                 String request = url.split("//")[1];
                 WelcomeActivity.sendEventRequest(request);
+                return true;
+            } else if (url.contains("searchavailablecity://")) { // Search for events in available city
+                String request = url.split("//")[1].replace("?","");
+                Log.i("SEARCH", request);
                 return true;
             } else {
                 return false;
