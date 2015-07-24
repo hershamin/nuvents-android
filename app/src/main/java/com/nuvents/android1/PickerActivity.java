@@ -129,6 +129,8 @@ public class PickerActivity extends ActionBarActivity {
             LatLng currentLoc = GlobalVariables.currentLoc;
             view.loadUrl("javascript:setLocation(\"" + currentLoc.latitude + "," +
                     currentLoc.longitude + "\")");
+            // Send server url to webview
+            view.loadUrl("javascript:setServer(\"" + GlobalVariables.server + "\")");
             super.onPageFinished(view, url);
         }
     }
