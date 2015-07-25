@@ -55,6 +55,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
             String filesDir = getApplicationContext().getFilesDir().getPath();
             String deviceID = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                     Settings.Secure.ANDROID_ID);
+            GlobalVariables.udid = deviceID;
             api = new NuVentsBackend(this, GlobalVariables.server, deviceID, filesDir);
             GlobalVariables.api= api;
         } catch (URISyntaxException e) {

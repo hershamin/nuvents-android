@@ -91,7 +91,7 @@ public class PickerActivity extends ActionBarActivity {
                 return true;
             } else if (url.contains("sendeventrequest://")) { // Send request to add city to backend
                 String request = url.split("//")[1];
-                WelcomeActivity.sendEventRequest(request);
+                WelcomeActivity.sendEventRequest(request + "&did=" + GlobalVariables.udid);
                 return true;
             } else if (url.contains("searchavailablecity://")) { // Search for events in available city
                 String request = url.split("//")[1].replace("?","");

@@ -44,6 +44,7 @@ public class GlobalVariables extends Application {
     public static String category; // To set event category
     public static NuVentsBackend api; // NuVents backend API
     public static WebView pickerWebView; // Picker View Web View
+    public static String udid; // Unique device id
 
     private static GlobalVariables singleton;
 
