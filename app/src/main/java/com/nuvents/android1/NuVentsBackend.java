@@ -41,7 +41,9 @@ public class NuVentsBackend {
         deviceID = devID; // Get device ID
         filesDir = fileDir; // Get files directory from application context
         // Socket connection handling
-        nSocket = IO.socket(server);
+        IO.Options opts = new IO.Options();
+        opts.transports = new String[]{"websocket"};
+        nSocket = IO.socket(server, opts);
         addSocketHandlingMethods();
         nSocket.connect();
     }

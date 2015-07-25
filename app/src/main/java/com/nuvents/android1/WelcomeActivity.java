@@ -214,16 +214,21 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         return super.onOptionsItemSelected(item);
     }
 
-    // NuVents server resources sync complete
-    @Override
-    public void nuventsServerDidSyncResources() {
-        runOnUiThread(new Runnable() { // Set picker button visible & activity indicator invisible
+    // Unblock current view so user can go to next view
+    private void unBlockView() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 pickerButton.setVisibility(View.VISIBLE);
                 activityIndicator.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    // NuVents server resources sync complete
+    @Override
+    public void nuventsServerDidSyncResources() {
+        unBlockView();
         // Set Background Image
         setBackgroundImage();
     }
@@ -277,6 +282,7 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
         GlobalVariables.eventJson.put((String) event.get("eid"), event);
         // Update count in picker activity
         PickerActivity.updateEventCount();
+        unBlockView();
     }
 
     @Override
@@ -307,6 +313,8 @@ public class WelcomeActivity extends ActionBarActivity implements NuVentsBackend
 
     @Override
     public void nuventsServerDidReceiveStatus(String type, String status) {
-        //
+        if (type.contains("Event Nearby")) {
+            unBlockView();
+        }
     }
 }
