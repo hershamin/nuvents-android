@@ -169,14 +169,14 @@
                       <div ng-if="!sentReq">
                         <div class="form-group">
                           <label for="name">Name:</label>
-                          <input type="name" class="form-control" name="input" ng-model="user.name" placeholder="Enter name" required>
+                          <input type="name" class="form-control" name="input" ng-model="user.name" placeholder="Enter name">
                             <label for="email">Email:</label>
                             <input type="email" class="form-control" name="input" ng-model="user.email" placeholder="Enter email">
                               </div>
                         <div role="alert">
                             <span class="error" ng-show="emailForm.input.$error.email"><strong>Not a valid e-mail address!</strong></span>
                         </div>
-                        <button type="submit" class="btn btn-default" ng-disabled="emailForm.$invalid">Submit</button><br><br>
+                        <button type="submit" class="btn btn-default" ng-disabled="emailForm.$invalid || !user.name || !user.email">Submit</button><br><br>
                         <div style="text-align:center;">
                             <button ng-if="!sentReq" type="submit" class="btn btn-default" ng-click="getCities(); sentReq = true;">Skip</button>
                         </div>
