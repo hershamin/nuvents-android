@@ -49,56 +49,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/gmaps_key" />
 
-        <activity
-            android:name=".DetailActivity"
-            android:label="@string/title_activity_detail_view"
-            android:parentActivityName=".WelcomeActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".WelcomeActivity" />
-        </activity>
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="f8b574d5e29a6fdfd495347c75350a31d19e1a84" />
 
-        <activity
-            android:name=".PickerActivity"
-            android:label="@string/title_activity_picker"
-            android:parentActivityName=".WelcomeActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".WelcomeActivity" />
-        </activity>
-        <activity
-            android:name=".MapActivity"
-            android:label="@string/title_activity_map"
-            android:parentActivityName=".PickerActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PickerActivity" />
-        </activity>
-        <activity
-            android:name=".ListActivity"
-            android:label="@string/title_activity_list"
-            android:parentActivityName=".PickerActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PickerActivity" />
-        </activity>
-        <activity
-            android:name=".CategoryActivity"
-            android:label="@string/title_activity_category"
-            android:parentActivityName=".PickerActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PickerActivity" />
-        </activity>
     </application>
 
 </manifest>
