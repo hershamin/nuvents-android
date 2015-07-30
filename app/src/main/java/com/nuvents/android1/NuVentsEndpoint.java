@@ -50,6 +50,9 @@ public class NuVentsEndpoint {
             e.printStackTrace();
         }
     }
+    private boolean connected = false; // To keep track of server connection status
+    private String lastNearbyEventRequest = ""; // To keep track of last event nearby request
+        // lat,lng,rad
 
     // Connect to backend
     public void connect() {
@@ -78,13 +81,18 @@ public class NuVentsEndpoint {
 
     // Get nearby events
     public void getNearbyEvents(LatLng location, float radius) {
-        JSONObject obj = new JSONObject();
-        obj.put("lat", "" + location.latitude);
-        obj.put("lng", "" + location.longitude);
-        obj.put("rad", "" + radius);
-        obj.put("time", "" + ((float) System.currentTimeMillis() / (float) 1000.0));
-        obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
-        nSocket.emit("event:nearby", obj);
+        if (connected) { // Connected to server
+            JSONObject obj = new JSONObject();
+            obj.put("lat", "" + location.latitude);
+            obj.put("lng", "" + location.longitude);
+            obj.put("rad", "" + radius);
+            obj.put("time", "" + ((float) System.currentTimeMillis() / (float) 1000.0));
+            obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
+            nSocket.emit("event:nearby", obj);
+        } else {
+            // Server not connected yet, store in lastNearbyEventRequest variable
+            lastNearbyEventRequest = location.latitude + "," + location.longitude + "," + radius;
+        }
     }
 
     // Get event detail
@@ -191,12 +199,23 @@ public class NuVentsEndpoint {
                 obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
                 obj.put("dm", NuVentsHelper.getDeviceHardware());
                 nSocket.emit("device:initial", obj);
+                connected = true;
+                // Send last known nearby event request if it exists
+                if (lastNearbyEventRequest.length() > 0) {
+                    String[] comps = lastNearbyEventRequest.split(",");
+                    double lat = Double.parseDouble(comps[0]);
+                    double lng = Double.parseDouble(comps[1]);
+                    float rad = Float.parseFloat(comps[2]);
+                    getNearbyEvents(new LatLng(lat,lng), rad);
+                    lastNearbyEventRequest = ""; // Reset last nearby event request variable
+                }
                 Log.i("NuVents Endpoint", "Connected");
             }
         });
         nSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
+                connected = false;
                 Log.i("NuVents Endpoint", "Disconnected");
             }
         });
