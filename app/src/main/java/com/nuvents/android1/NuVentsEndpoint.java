@@ -77,12 +77,12 @@ public class NuVentsEndpoint {
     }
 
     // Get nearby events
-    public void getNearbyEvents(LatLng location, float radius, float timestamp) {
+    public void getNearbyEvents(LatLng location, float radius) {
         JSONObject obj = new JSONObject();
         obj.put("lat", "" + location.latitude);
         obj.put("lng", "" + location.longitude);
         obj.put("rad", "" + radius);
-        obj.put("time", "" + timestamp);
+        obj.put("time", "" + ((float) System.currentTimeMillis() / (float) 1000.0));
         obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
         nSocket.emit("event:nearby", obj);
     }
