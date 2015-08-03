@@ -115,6 +115,22 @@ public class NuVentsEndpoint {
         });
     }
 
+    // Get resources from server
+    private void getResourcesFromServer() {
+        JSONObject obj = new JSONObject();
+        obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
+        obj.put("dm", NuVentsHelper.getDeviceHardware());
+        nSocket.emit("resources", obj, new Ack() {
+            @Override
+            public void call(Object... args) {
+                Log.i("NuVents Endpoint", "Resources Received");
+                Object rawObj = JSONValue.parse((String)args[0]);
+                JSONObject obj = (JSONObject)rawObj;
+                syncResources(obj);
+            }
+        });
+    }
+
     // Sync resources with server
     private void syncResources(JSONObject jsonData) {
 
@@ -140,6 +156,7 @@ public class NuVentsEndpoint {
 
             }
         }
+        Log.i("NuVents Endpoint", "Resources Sync Complete");
     }
 
     // Socket handling methods
@@ -168,37 +185,11 @@ public class NuVentsEndpoint {
             }
         });
 
-        // Resources status
-        nSocket.on("resources:status", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                String resp = (String)args[0];
-                if (resp.contains("Error")) { // error status
-                    Log.e("NuVents Endpoint", "Resources " + resp);
-                } else {
-                    Log.i("NuVents Endpoint", "Resources Received");
-                }
-            }
-        });
-
-        // Received resources from server
-        nSocket.on("resources", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                Object rawObj = JSONValue.parse((String)args[0]);
-                JSONObject obj = (JSONObject)rawObj;
-                syncResources(obj);
-            }
-        });
-
         // Connection Status
         nSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                JSONObject obj = new JSONObject();
-                obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
-                obj.put("dm", NuVentsHelper.getDeviceHardware());
-                nSocket.emit("device:initial", obj);
+                getResourcesFromServer();
                 connected = true;
                 // Send last known nearby event request if it exists
                 if (lastNearbyEventRequest.length() > 0) {
