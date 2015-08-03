@@ -15,7 +15,8 @@ public class WelcomeActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+        // Initiate fabricIO if in release build
+        if (!BuildConfig.DEBUG) { Fabric.with(this, new Crashlytics()); }
         setContentView(R.layout.activity_welcome);
 
         // TEMP CODE, find events in austin, tx
