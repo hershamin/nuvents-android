@@ -11,7 +11,8 @@ public class AppDelegate extends Application {
     public void onCreate() {
         super.onCreate();
         // Called on app start
-
+        // Begin NuVents backend connection
+        NuVentsEndpoint.sharedEndpoint(getApplicationContext()).connect();
     }
 
 }

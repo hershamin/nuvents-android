@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.maps.model.LatLng;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -16,6 +17,10 @@ public class WelcomeActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_welcome);
+
+        // TEMP CODE, find events in austin, tx
+        NuVentsEndpoint.sharedEndpoint(getApplicationContext()).getNearbyEvents(
+                new LatLng(30.27, -97.74), 10000);
 
     }
 
