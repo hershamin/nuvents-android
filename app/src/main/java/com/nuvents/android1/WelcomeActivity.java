@@ -4,19 +4,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.model.LatLng;
-
-import io.fabric.sdk.android.Fabric;
-
 
 public class WelcomeActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Initiate fabricIO if in release build
-        if (!BuildConfig.DEBUG) { Fabric.with(this, new Crashlytics()); }
         setContentView(R.layout.activity_welcome);
 
         // TEMP CODE, find events in austin, tx
