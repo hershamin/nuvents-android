@@ -140,7 +140,7 @@ public class NuVentsEndpoint {
             JSONObject resources = (JSONObject)types.get(type);
             for (Object resource : resources.keySet()) { // Resources
 
-                String path = NuVentsHelper.getResourcePath((String) resource, (String) type, true, applicationContext);
+                String path = NuVentsHelper.getResourcePath((String) resource, (String) type, applicationContext);
                 File pathFile = new File(path);
                 if (!pathFile.exists()) { // File does not exist
                     NuVentsHelper.downloadFile(path, (String) resources.get(resource)); // Download from provided url
