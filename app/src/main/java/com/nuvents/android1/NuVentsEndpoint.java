@@ -62,7 +62,6 @@ public class NuVentsEndpoint {
 
     // Disconnect from backend
     public void disconnect() {
-        nSocket.off();
         nSocket.disconnect();
     }
 
@@ -208,11 +207,13 @@ public class NuVentsEndpoint {
             public void call(Object... args) {
                 connected = false;
                 Log.i("NuVents Endpoint", "Disconnected");
+                nSocket.off();
             }
         });
         nSocket.on("error", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
+                connected = false;
                 Log.e("NuVents Endpoint", "Connection: " + (String)args[0]);
             }
         });
