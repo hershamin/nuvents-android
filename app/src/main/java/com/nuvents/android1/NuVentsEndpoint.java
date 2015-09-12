@@ -39,6 +39,7 @@ public class NuVentsEndpoint {
 
     // Global Variables
     Map<String, JSONObject> eventJSON = new HashMap<String, JSONObject>();
+    JSONObject tempJson = new JSONObject();
 
     // Internally used variables
     private static Context applicationContext;
@@ -99,19 +100,8 @@ public class NuVentsEndpoint {
         JSONObject obj = new JSONObject();
         obj.put("eid", eventID);
         obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
-        nSocket.emit("event:detail", obj, new Ack() {
-            @Override
-            public void call(Object... args) {
-                String retStr = (String)args[0];
-                if (!retStr.contains("Error")) {
-                    Object rawObj = JSONValue.parse(retStr);
-                    JSONObject obj = (JSONObject)rawObj;
-                    callback.json(obj);
-                } else {
-                    // TODO: Handle ERROR
-                }
-            }
-        });
+        obj.put("time","" + ((float) System.currentTimeMillis() / (float) 1000.0));
+        nSocket.emit("event:detail", obj);
     }
 
     // Get resources from server
@@ -119,15 +109,7 @@ public class NuVentsEndpoint {
         JSONObject obj = new JSONObject();
         obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
         obj.put("dm", NuVentsHelper.getDeviceHardware());
-        nSocket.emit("resources", obj, new Ack() {
-            @Override
-            public void call(Object... args) {
-                Log.i("NuVents Endpoint", "Resources Received");
-                Object rawObj = JSONValue.parse((String)args[0]);
-                JSONObject obj = (JSONObject)rawObj;
-                syncResources(obj);
-            }
-        });
+        nSocket.emit("resources", obj);
     }
 
     // Sync resources with server
@@ -180,6 +162,47 @@ public class NuVentsEndpoint {
                     Log.e("NuVents Endpoint", "Event Nearby: " + resp);
                 } else {
                     Log.i("NuVents Endpoint", "Event Nearby Received");
+                }
+            }
+        });
+
+        // Event Detail Received
+        nSocket.on("event:detail", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                String resp = (String)args[0];
+                JSONObject jsonData = (JSONObject)JSONValue.parse(resp);
+                // Add to global variable
+                NuVentsEndpoint.sharedEndpoint(applicationContext).tempJson = jsonData;
+                // Notify views
+                // TODO: Notify Views
+            }
+        });
+
+        // Event Detail Error & Status
+        nSocket.on("event:detail:status", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                String resp = (String)args[0];
+                if (resp.contains("Error")) { // error status
+                    Log.e("NuVents Endpoint", "Event Detail: " + resp);
+                } else {
+                    Log.e("NuVents Endpoint", "Event Detail Received");
+                }
+            }
+        });
+
+        // Resources received from server
+        nSocket.on("resources", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                String resp = (String)args[0];
+                if (resp.contains("Error")) { // error status
+                    Log.e("NuVents Endpoint", "Resources: " + resp);
+                } else {
+                    Log.i("NuVents Endpoint", "Resources Received");
+                    JSONObject jsonData = (JSONObject)JSONValue.parse(resp);
+                    syncResources(jsonData); // Sync Resources
                 }
             }
         });
