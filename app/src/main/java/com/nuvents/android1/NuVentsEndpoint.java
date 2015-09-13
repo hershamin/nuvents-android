@@ -158,6 +158,9 @@ public class NuVentsEndpoint {
                 JSONObject obj = (JSONObject)rawObj;
                 // Add to global vars
                 NuVentsEndpoint.sharedEndpoint(applicationContext).eventJSON.put((String)obj.get("eid"), obj);
+                // Acknowledge Server
+                Ack ack = (Ack) args[args.length - 1];
+                ack.call("Nearby Event Received");
             }
         });
 
@@ -171,6 +174,9 @@ public class NuVentsEndpoint {
                 } else {
                     Log.i("NuVents Endpoint", "Event Nearby Received");
                 }
+                // Acknowledge Server
+                Ack ack = (Ack) args[args.length - 1];
+                ack.call("Nearby Event Status Received");
             }
         });
 
@@ -184,6 +190,9 @@ public class NuVentsEndpoint {
                 NuVentsEndpoint.sharedEndpoint(applicationContext).tempJson = jsonData;
                 // Notify views
                 // TODO: Notify Views
+                // Acknowledge Server
+                Ack ack = (Ack) args[args.length - 1];
+                ack.call("Event Detail Received");
             }
         });
 
@@ -212,6 +221,9 @@ public class NuVentsEndpoint {
                     JSONObject jsonData = (JSONObject)JSONValue.parse(resp);
                     syncResources(jsonData); // Sync Resources
                 }
+                // Acknowledge Server
+                Ack ack = (Ack) args[args.length - 1];
+                ack.call("Resources Received");
             }
         });
 
