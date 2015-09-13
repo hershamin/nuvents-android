@@ -140,6 +140,14 @@ public class NuVentsEndpoint {
         Log.i("NuVents Endpoint", "Resources Sync Complete");
     }
 
+    // Send request to retrieve missed messages from server
+    private void retrieveMissedMessages() {
+        JSONObject obj = new JSONObject();
+        obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
+        obj.put("dm", NuVentsHelper.getDeviceHardware());
+        nSocket.emit("history", obj);
+    }
+
     // Socket handling methods
     private void addSocketHandlingMethods() {
         // Nearby Event Received
@@ -211,6 +219,7 @@ public class NuVentsEndpoint {
         nSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
+                retrieveMissedMessages();
                 getResourcesFromServer();
                 connected = true;
                 // Send last known nearby event request if it exists
