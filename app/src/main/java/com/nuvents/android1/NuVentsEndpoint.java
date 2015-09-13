@@ -54,7 +54,9 @@ public class NuVentsEndpoint {
     }
     private boolean connected = false; // To keep track of server connection status
     private ArrayList<String> socketBuffer = new ArrayList<String>(); // To store failed to send socket events in buffer to retry on connection
+        // event||message
     private ArrayList<JSONObject> socketJson = new ArrayList<JSONObject>(); // To store failed to send socket events in buffer to retry on connection
+        // message (JSONObject)
 
     // Connect to backend
     public void connect() {
@@ -90,15 +92,16 @@ public class NuVentsEndpoint {
         obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
         // Add to buffer
         final String event = "event:nearby";
+        final String eventMess = event + "||" + obj.toString();
         final JSONObject message = obj;
-        socketBuffer.add(event);
+        socketBuffer.add(eventMess);
         socketJson.add(message);
         // Emit with acknowledgement
         nSocket.emit(event, message, new Ack() {
             @Override
             public void call(Object... args) {
                 // Event received on server side, remove from buffer
-                socketBuffer.remove(event);
+                socketBuffer.remove(eventMess);
                 socketJson.remove(message);
             }
         });
@@ -112,15 +115,16 @@ public class NuVentsEndpoint {
         obj.put("time", "" + ((float) System.currentTimeMillis() / (float) 1000.0));
         // Add to buffer
         final String event = "event:detail";
+        final String eventMess = event + "||" + obj.toString();
         final JSONObject message = obj;
-        socketBuffer.add(event);
+        socketBuffer.add(eventMess);
         socketJson.add(message);
         // Emit with acknowledgement
         nSocket.emit(event, message, new Ack() {
             @Override
             public void call(Object... args) {
                 // Event received on server side, remove from buffer
-                socketBuffer.remove(event);
+                socketBuffer.remove(eventMess);
                 socketJson.remove(message);
             }
         });
@@ -133,15 +137,16 @@ public class NuVentsEndpoint {
         obj.put("dm", NuVentsHelper.getDeviceHardware());
         // Add to buffer
         final String event = "resources";
+        final String eventMess = event + "||" + obj.toString();
         final JSONObject message = obj;
-        socketBuffer.add(event);
+        socketBuffer.add(eventMess);
         socketJson.add(message);
         // Emit with acknowledgement
         nSocket.emit(event, message, new Ack() {
             @Override
             public void call(Object... args) {
                 // Event received on server side, remove from buffer
-                socketBuffer.remove(event);
+                socketBuffer.remove(eventMess);
                 socketJson.remove(message);
             }
         });
@@ -188,13 +193,14 @@ public class NuVentsEndpoint {
         // Empty Local Buffer of socket messages
         for (int i=0; i<socketBuffer.size(); i++) {
             // Emit event
-            final String event = socketBuffer.get(i);
+            final String event = socketBuffer.get(i).split("\\|\\|")[0];
+            final String eventMess = socketBuffer.get(i);
             final JSONObject message = socketJson.get(i);
             nSocket.emit(event, message, new Ack() {
                 @Override
                 public void call(Object... args) {
                     // Event received on server side, remove from buffer
-                    socketBuffer.remove(event);
+                    socketBuffer.remove(eventMess);
                     socketJson.remove(message);
                 }
             });
