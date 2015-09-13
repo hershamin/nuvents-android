@@ -54,6 +54,7 @@ public class NuVentsEndpoint {
     }
     private boolean connected = false; // To keep track of server connection status
     private ArrayList<String> socketBuffer = new ArrayList<String>(); // To store failed to send socket events in buffer to retry on connection
+    private ArrayList<JSONObject> socketJson = new ArrayList<JSONObject>(); // To store failed to send socket events in buffer to retry on connection
 
     // Connect to backend
     public void connect() {
@@ -87,10 +88,20 @@ public class NuVentsEndpoint {
         obj.put("rad", "" + radius);
         obj.put("time", "" + ((float) System.currentTimeMillis() / (float) 1000.0));
         obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
-        nSocket.emit("event:nearby", obj);
         // Add to buffer
-        String buffEntry = obj.toString();
-        socketBuffer.add("event:nearby||" + buffEntry);
+        final String event = "event:nearby";
+        final JSONObject message = obj;
+        socketBuffer.add(event);
+        socketJson.add(message);
+        // Emit with acknowledgement
+        nSocket.emit(event, message, new Ack() {
+            @Override
+            public void call(Object... args) {
+                // Event received on server side, remove from buffer
+                socketBuffer.remove(event);
+                socketJson.remove(message);
+            }
+        });
     }
 
     // Get event detail
@@ -99,10 +110,20 @@ public class NuVentsEndpoint {
         obj.put("eid", eventID);
         obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
         obj.put("time", "" + ((float) System.currentTimeMillis() / (float) 1000.0));
-        nSocket.emit("event:detail", obj);
         // Add to buffer
-        String buffEntry = obj.toString();
-        socketBuffer.add("event:detail||" + buffEntry);
+        final String event = "event:detail";
+        final JSONObject message = obj;
+        socketBuffer.add(event);
+        socketJson.add(message);
+        // Emit with acknowledgement
+        nSocket.emit(event, message, new Ack() {
+            @Override
+            public void call(Object... args) {
+                // Event received on server side, remove from buffer
+                socketBuffer.remove(event);
+                socketJson.remove(message);
+            }
+        });
     }
 
     // Get resources from server
@@ -110,10 +131,20 @@ public class NuVentsEndpoint {
         JSONObject obj = new JSONObject();
         obj.put("did", NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
         obj.put("dm", NuVentsHelper.getDeviceHardware());
-        nSocket.emit("resources", obj);
         // Add to buffer
-        String buffEntry = obj.toString();
-        socketBuffer.add("resources||" + buffEntry);
+        final String event = "resources";
+        final JSONObject message = obj;
+        socketBuffer.add(event);
+        socketJson.add(message);
+        // Emit with acknowledgement
+        nSocket.emit(event, message, new Ack() {
+            @Override
+            public void call(Object... args) {
+                // Event received on server side, remove from buffer
+                socketBuffer.remove(event);
+                socketJson.remove(message);
+            }
+        });
     }
 
     // Sync resources with server
@@ -155,6 +186,19 @@ public class NuVentsEndpoint {
     // Empty local buffer of socket message
     private void emptyLocalBuffer() {
         // Empty Local Buffer of socket messages
+        for (int i=0; i<socketBuffer.size(); i++) {
+            // Emit event
+            final String event = socketBuffer.get(i);
+            final JSONObject message = socketJson.get(i);
+            nSocket.emit(event, message, new Ack() {
+                @Override
+                public void call(Object... args) {
+                    // Event received on server side, remove from buffer
+                    socketBuffer.remove(event);
+                    socketJson.remove(message);
+                }
+            });
+        }
     }
 
     // Socket handling methods
