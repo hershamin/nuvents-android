@@ -41,6 +41,7 @@ public class NuVentsEndpoint {
     // Global Variables
     Map<String, JSONObject> eventJSON = new HashMap<String, JSONObject>();
     JSONObject tempJson = new JSONObject();
+    LatLng currLoc = new LatLng(0,0);
 
     // Internally used variables
     private static Context applicationContext;
@@ -78,8 +79,31 @@ public class NuVentsEndpoint {
     }
 
     // Send event request to add city
-    public void sendEventReq(String request) {
-        nSocket.emit("event:request", request);
+    public void sendEventReq(String city, String state, String zip, String name, String email) {
+        JSONObject obj = new JSONObject();
+        obj.put("city", city);
+        obj.put("state", state);
+        obj.put("zip", zip);
+        obj.put("name", name);
+        obj.put("email", email);
+        obj.put("latlng", "" + NuVentsEndpoint.sharedEndpoint(applicationContext).currLoc.latitude
+                     + "," + NuVentsEndpoint.sharedEndpoint(applicationContext).currLoc.longitude);
+        obj.put("did", "" + NuVentsEndpoint.sharedEndpoint(applicationContext).udid);
+        // Add to buffer
+        final String event = "event:request";
+        final String eventMess = event + "||" + obj.toString();
+        final JSONObject message = obj;
+        socketBuffer.add(eventMess);
+        socketJson.add(message);
+        // Emit with acknowledgement
+        nSocket.emit(event, message, new Ack() {
+            @Override
+            public void call(Object... args) {
+                // Event received on server side, remove from buffer
+                socketBuffer.remove(eventMess);
+                socketJson.remove(message);
+            }
+        });
     }
 
     // Get nearby events
